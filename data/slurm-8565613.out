@@ -1,0 +1,8 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) chpc/1.0
+srun: error: notch382: task 2: Exited with exit code 1
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** STEP 8565613.0 ON notch382 CANCELLED AT 2023-09-22T14:09:18 DUE TO PREEMPTION ***
+slurmstepd: error: *** JOB 8565613 ON notch382 CANCELLED AT 2023-09-22T14:09:18 DUE TO PREEMPTION ***

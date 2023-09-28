@@ -1,0 +1,11 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) chpc/1.0
+srun: error: notch360: task 19: Exited with exit code 1
+srun: error: notch360: task 8: Exited with exit code 1
+srun: error: notch360: task 38: Exited with exit code 1
+srun: error: notch360: task 30: Exited with exit code 1
+slurmstepd: error: *** STEP 8565612.0 ON notch360 CANCELLED AT 2023-09-23T00:34:24 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** JOB 8565612 ON notch360 CANCELLED AT 2023-09-23T00:34:24 DUE TO TIME LIMIT ***
