@@ -21,6 +21,7 @@ DESCRIPTION = 'None'
 
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
 NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
+PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job step number\s+', re.DOTALL)
 
 class bcolors:
     HEADER = '\033[95m'
@@ -62,12 +63,25 @@ def get_file_text(file: Path) -> str:
 def process_text(text: str) -> None:
     '''Detailed debugging info on a file'''
     lines = text.split('\n')
+
+    # Lines after which a normal termination should appear
+    termination_indicator_lines = []
+
     for i, line in enumerate(lines):
         if re.match(LINK_PATTERN, line) is not None:
             print(f'\tLink on line {i+1}')
+            termination_indicator_lines.append(i)
 
-        if re.match(NORM_TERM_PATTERN, line) is not None:
+        elif re.match(NORM_TERM_PATTERN, line) is not None:
             print(f'\tTermination on line {i+1}')
+
+        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
+            print(f'\tStarted internal job step on line {i+1}')
+            termination_indicator_lines.append(i)
+        else:
+            pass
+
+    print(termination_indicator_lines)
 
 def get_n_normal_terminations(text: str) -> int:
     return len(re.findall(NORM_TERM_PATTERN, text))
