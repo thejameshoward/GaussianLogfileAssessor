@@ -242,7 +242,6 @@ def main(args) -> None:
             if not args.dry:
                 shutil.move(parent_dir / file.with_suffix(".com").name, failed_dir / file.with_suffix(".com").name)
 
-
 if __name__ == "__main__":
     args = get_args()
 
