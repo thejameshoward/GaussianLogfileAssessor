@@ -1,5 +1,7 @@
 # GaussianLogfileAssessor
-Analyzes Gaussian .log files
+This script provides useful information about Gaussian 16 .log files including whether or not all planned calculations (or internal Gaussian jobs) completed. By default, the script moves the completed and failed fails along with any corresponding input (.com) files to their respective `failed` and `completed` directories.
+<br>
+<br>
 
 
 ## Installation
@@ -20,7 +22,7 @@ Analyzes Gaussian .log files
 In the example above, ~/bin/ is an existing directory on the PATH. If you have not added<br>
 a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home-username-bin-to-path](https://askubuntu.com/questions/402353/how-to-add-home-username-bin-to-path).
 
-## Example usage
+## Examples
 
 1.  Run the script in the directory containing your Gaussian 16 log files.
 
@@ -28,7 +30,7 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/example.png?raw=true)
 
-2.  Run the script on a directory containing your Gaussian 16 log files without copying files.
+2.  Run the script on different directory containing your Gaussian 16 log files without moving any files.
 
     ```checkGaussianLogFiles.py -i data/ --dry```
 
@@ -37,3 +39,11 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
     ```checkGaussianLogFiles.py -i data/ --debug```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
+
+## CLI Flags
+
+```-i, --input```&nbsp;&nbsp;&nbsp;&nbsp;The directory to be analyzed. The default is current working directory.
+
+```--dry```&nbsp;&nbsp;&nbsp;&nbsp;Disable the creation of new folders and moving files. Useful for inspecting files.
+
+```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Enables dev level debugging to be printed to the terminal.

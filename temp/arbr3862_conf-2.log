@@ -1,0 +1,367 @@
+ Entering Gaussian System, Link 0=/uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/g16
+ Input=arbr3862_conf-2.com
+ Output=arbr3862_conf-2.log
+ Initial command:
+ /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe "/scratch/general/vast/u1365460/notchpeak.peaks/Gau-3382630.inp" -scrdir="/scratch/general/vast/u1365460/notchpeak.peaks/"
+ Entering Link 1 = /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe PID=   3383296.
+
+ Copyright (c) 1988-2019, Gaussian, Inc.  All Rights Reserved.
+
+ This is part of the Gaussian(R) 16 program.  It is based on
+ the Gaussian(R) 09 system (copyright 2009, Gaussian, Inc.),
+ the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
+ the Gaussian(R) 98 system (copyright 1998, Gaussian, Inc.),
+ the Gaussian(R) 94 system (copyright 1995, Gaussian, Inc.),
+ the Gaussian 92(TM) system (copyright 1992, Gaussian, Inc.),
+ the Gaussian 90(TM) system (copyright 1990, Gaussian, Inc.),
+ the Gaussian 88(TM) system (copyright 1988, Gaussian, Inc.),
+ the Gaussian 86(TM) system (copyright 1986, Carnegie Mellon
+ University), and the Gaussian 82(TM) system (copyright 1983,
+ Carnegie Mellon University). Gaussian is a federally registered
+ trademark of Gaussian, Inc.
+
+ This software contains proprietary and confidential information,
+ including trade secrets, belonging to Gaussian, Inc.
+
+ This software is provided under written license and may be
+ used, copied, transmitted, or stored only in accord with that
+ written license.
+
+ The following legend is applicable only to US Government
+ contracts under FAR:
+
+                    RESTRICTED RIGHTS LEGEND
+
+ Use, reproduction and disclosure by the US Government is
+ subject to restrictions as set forth in subparagraphs (a)
+ and (c) of the Commercial Computer Software - Restricted
+ Rights clause in FAR 52.227-19.
+
+ Gaussian, Inc.
+ 340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
+
+
+ ---------------------------------------------------------------
+ Warning -- This program may not be used in any manner that
+ competes with the business of Gaussian, Inc. or will provide
+ assistance to any competitor of Gaussian, Inc.  The licensee
+ of this program is prohibited from giving any competitor of
+ Gaussian, Inc. access to this program.  By using this program,
+ the user acknowledges that Gaussian, Inc. is engaged in the
+ business of creating and licensing software in the field of
+ computational chemistry and represents and warrants to the
+ licensee that it is not a competitor of Gaussian, Inc. and that
+ it will not use this program in any manner prohibited above.
+ ---------------------------------------------------------------
+
+
+ Cite this work as:
+ Gaussian 16, Revision C.01,
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria,
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone,
+ G. A. Petersson, H. Nakatsuji, X. Li, M. Caricato, A. V. Marenich,
+ J. Bloino, B. G. Janesko, R. Gomperts, B. Mennucci, H. P. Hratchian,
+ J. V. Ortiz, A. F. Izmaylov, J. L. Sonnenberg, D. Williams-Young,
+ F. Ding, F. Lipparini, F. Egidi, J. Goings, B. Peng, A. Petrone,
+ T. Henderson, D. Ranasinghe, V. G. Zakrzewski, J. Gao, N. Rega,
+ G. Zheng, W. Liang, M. Hada, M. Ehara, K. Toyota, R. Fukuda,
+ J. Hasegawa, M. Ishida, T. Nakajima, Y. Honda, O. Kitao, H. Nakai,
+ T. Vreven, K. Throssell, J. A. Montgomery, Jr., J. E. Peralta,
+ F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin,
+ V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand,
+ K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar,
+ J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi,
+ J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas,
+ J. B. Foresman, and D. J. Fox, Gaussian, Inc., Wallingford CT, 2019.
+
+ ******************************************
+ Gaussian 16:  ES64L-G16RevC.01  3-Jul-2019
+                 2-Oct-2023
+ ******************************************
+ %nprocs=28
+ Will use up to   28 processors via shared memory.
+ %mem=16GB
+ %chk=arbr3862_conf-2.chk
+ ----------------------------------------------------------------------
+ # B3LYP/6-31G(d,p) empiricaldispersion=GD3BJ int=(grid=ultrafine) opt
+ freq=noraman
+ ----------------------------------------------------------------------
+ 1/18=20,19=15,26=4,38=1/1,3;
+ 2/9=110,12=2,17=6,18=5,40=1/2;
+ 3/5=1,6=6,7=101,11=2,25=1,30=1,71=1,74=-5,75=-5,124=41/1,2,3;
+ 4//1;
+ 5/5=2,38=5/2;
+ 6/7=2,8=2,9=2,10=2,28=1/1;
+ 7//1,2,3,16;
+ 1/18=20,19=15,26=4/3(2);
+ 2/9=110/2;
+ 99//99;
+ 2/9=110/2;
+ 3/5=1,6=6,7=101,11=2,25=1,30=1,71=1,74=-5,75=-5,124=41/1,2,3;
+ 4/5=5,16=3,69=1/1;
+ 5/5=2,38=5/2;
+ 7//1,2,3,16;
+ 1/18=20,19=15,26=4/3(-5);
+ 2/9=110/2;
+ 6/7=2,8=2,9=2,10=2,19=2,28=1/1;
+ 99/9=1/99;
+Erroneous write. Write -1 instead of 800.
+fd = 4
+orig len = 800 left = 800
+g_write
+ Initial command:
+ /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe "/scratch/general/vast/u1365460/notchpeak.peaks/Gau-3382643.inp" -scrdir="/scratch/general/vast/u1365460/notchpeak.peaks/"
+ Entering Link 1 = /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe PID=   3387453.
+
+ Copyright (c) 1988-2019, Gaussian, Inc.  All Rights Reserved.
+
+ This is part of the Gaussian(R) 16 program.  It is based on
+ the Gaussian(R) 09 system (copyright 2009, Gaussian, Inc.),
+ the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
+ the Gaussian(R) 98 system (copyright 1998, Gaussian, Inc.),
+ the Gaussian(R) 94 system (copyright 1995, Gaussian, Inc.),
+ the Gaussian 92(TM) system (copyright 1992, Gaussian, Inc.),
+ the Gaussian 90(TM) system (copyright 1990, Gaussian, Inc.),
+ the Gaussian 88(TM) system (copyright 1988, Gaussian, Inc.),
+ the Gaussian 86(TM) system (copyright 1986, Carnegie Mellon
+ University), and the Gaussian 82(TM) system (copyright 1983,
+ Carnegie Mellon University). Gaussian is a federally registered
+ trademark of Gaussian, Inc.
+
+ This software contains proprietary and confidential information,
+ including trade secrets, belonging to Gaussian, Inc.
+
+ This software is provided under written license and may be
+ used, copied, transmitted, or stored only in accord with that
+ written license.
+
+ The following legend is applicable only to US Government
+ contracts under FAR:
+
+                    RESTRICTED RIGHTS LEGEND
+
+ Use, reproduction and disclosure by the US Government is
+ subject to restrictions as set forth in subparagraphs (a)
+ and (c) of the Commercial Computer Software - Restricted
+ Rights clause in FAR 52.227-19.
+
+ Gaussian, Inc.
+ 340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
+
+
+ ---------------------------------------------------------------
+ Warning -- This program may not be used in any manner that
+ competes with the business of Gaussian, Inc. or will provide
+ assistance to any competitor of Gaussian, Inc.  The licensee
+ of this program is prohibited from giving any competitor of
+ Gaussian, Inc. access to this program.  By using this program,
+ the user acknowledges that Gaussian, Inc. is engaged in the
+ business of creating and licensing software in the field of
+ computational chemistry and represents and warrants to the
+ licensee that it is not a competitor of Gaussian, Inc. and that
+ it will not use this program in any manner prohibited above.
+ ---------------------------------------------------------------
+
+
+ Cite this work as:
+ Gaussian 16, Revision C.01,
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria,
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone,
+ G. A. Petersson, H. Nakatsuji, X. Li, M. Caricato, A. V. Marenich,
+ J. Bloino, B. G. Janesko, R. Gomperts, B. Mennucci, H. P. Hratchian,
+ J. V. Ortiz, A. F. Izmaylov, J. L. Sonnenberg, D. Williams-Young,
+ F. Ding, F. Lipparini, F. Egidi, J. Goings, B. Peng, A. Petrone,
+ T. Henderson, D. Ranasinghe, V. G. Zakrzewski, J. Gao, N. Rega,
+ G. Zheng, W. Liang, M. Hada, M. Ehara, K. Toyota, R. Fukuda,
+ J. Hasegawa, M. Ishida, T. Nakajima, Y. Honda, O. Kitao, H. Nakai,
+ T. Vreven, K. Throssell, J. A. Montgomery, Jr., J. E. Peralta,
+ F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin,
+ V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand,
+ K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar,
+ J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi,
+ J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas,
+ J. B. Foresman, and D. J. Fox, Gaussian, Inc., Wallingford CT, 2019.
+
+ ******************************************
+ Gaussian 16:  ES64L-G16RevC.01  3-Jul-2019
+                 2-Oct-2023
+ ******************************************
+ %nprocs=28
+ Will use up to   28 processors via shared memory.
+ %mem=16GB
+ %chk=arbr3862_conf-2.chk
+ ----------------------------------------------------------------------
+ # M062X/def2tzvp int=(grid=ultrafine) pop=nbo7 polar prop=efg volume g
+ uess=read geom=check
+ ----------------------------------------------------------------------
+ 1/29=2,38=1,172=1/1;
+ 2/12=2,40=1/2;
+ 3/5=44,7=101,11=2,14=-4,25=1,30=1,74=-55,75=-5,116=-2/1,2,3;
+ 4/5=1/1;
+ 5/5=2,38=6,98=1/2;
+ 8/6=4,10=90,11=11/1;
+ 10/6=1,13=10/2;
+ 6/7=2,8=2,9=2,10=2,14=1,28=1,40=1,44=1,113=1,114=1,124=3103/1,2,4,12;
+ 99/5=1,9=1/99;
+ ------------
+ arbr3862.xyz
+ ------------
+ Structure from the checkpoint file:  "arbr3862_conf-2.chk"
+ FileIO operation on non-existent file.
+ FileIO: IOper= 2 IFilNo(1)=-20997 Len=          20 IPos=           0 Q=  140736100878368
+
+
+ dumping /fiocom/, unit = 1 NFiles =    16 SizExt =    524288 WInBlk =    131072
+                   defal = F LstWrd =     2228224 FType=2 FMxFil=10000
+
+ Number              0           501           502           598           801           988
+ Base          2097152        917504       1572864       1703936       1966080       1179648
+ End           2228224        918504       1576969       1703938       1966086       1249652
+ End1          2228224       1048576       1703936       1835008       2097152       1310720
+ Wr Pntr       2097152        917504       1572968       1703936       1966080       1179648
+ Rd Pntr       2097152        917504       1572864       1703936       1966080       1249652
+ Length         131072          1000          4105             2             6         70004
+ Int.Num             1             2             3             4             5             6
+
+ Number            989           991           992           993           994           995
+ Base          1048576       1441792       1310720        786432        131072        655360
+ End           1068576       1448354       1310730        786632        131102        655380
+ End1          1179648       1572864       1441792        917504        262144        786432
+ Wr Pntr       1048576       1441792       1310720        786432        131072        655360
+ Rd Pntr       1048576       1448354       1310730        786632        131102        655380
+ Length          20000          6562            10           200            30            20
+ Int.Num             7             8             9            10            11            12
+
+ Number            996           997           998           999
+ Base           393216        524288        262144       1835008
+ End            393416        524458        262344       1937512
+ End1           524288        655360        393216       1966080
+ Wr Pntr        393216        524288        262344       1835008
+ Rd Pntr        393416        524458        262344       1837512
+ Length            200           170           200        102504
+ Int.Num            13            14            15            16
+
+
+ dumping /fiocom/, unit = 2 NFiles =     1 SizExt =         0 WInBlk =    131072
+                   defal = F LstWrd =      262144 FType=2 FMxFil=10000
+
+ Number              0
+ Base           131072
+ End            262144
+ End1           262144
+ Wr Pntr        131072
+ Rd Pntr        131072
+ Length         131072
+ Int.Num             1
+
+
+ dumping /fiocom/, unit = 3 NFiles =     1 SizExt =    524288 WInBlk =    131072
+                   defal = F LstWrd =      262144 FType=2 FMxFil=10000
+
+ Number              0
+ Base           131072
+ End            262144
+ End1           262144
+ Wr Pntr        131072
+ Rd Pntr        131072
+ Length         131072
+ Int.Num             1
+ FileIO operation on non-existent file.
+ FileIO: IOper= 2 IFilNo(1)=-20997 Len=          20 IPos=           0 Q=  140736100878368
+ Error termination in NtrErr:
+ NtrErr Called from FileIO.
+ssell, J. A. Montgomery, Jr., J. E. Peralta,
+ F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin,
+ V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand,
+ K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar,
+ J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi,
+ J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas,
+ J. B. Foresman, and D. J. Fox, Gaussian, Inc., Wallingford CT, 2019.
+
+ ******************************************
+ Gaussian 16:  ES64L-G16RevC.01  3-Jul-2019
+                 2-Oct-2023
+ ******************************************
+ %nprocs=28
+ Will use up to   28 processors via shared memory.
+ %mem=16GB
+ %chk=arbr3862_conf-2.chk
+ --------------------------------------------------------------------
+ # M062X/def2tzvp int=(grid=ultrafine) nmr=giao guess=read geom=check
+ --------------------------------------------------------------------
+ 1/29=2,38=1,172=1/1;
+ 2/12=2,40=1/2;
+ 3/5=44,7=101,11=2,14=-4,25=1,30=1,74=-55,75=-5,116=-2/1,2,3,8;
+ 4/5=1/1;
+ 5/5=2,38=6/2;
+ 8/6=1,10=90,11=11/1;
+ 10/13=100,45=16/2;
+ 6/7=2,8=2,9=2,10=2,28=1/1;
+ 99/9=1/99;
+ ------------
+ arbr3862.xyz
+ ------------
+ Structure from the checkpoint file:  "arbr3862_conf-2.chk"
+ FileIO operation on non-existent file.
+ FileIO: IOper= 2 IFilNo(1)=-20997 Len=          20 IPos=           0 Q=  140722674060368
+
+
+ dumping /fiocom/, unit = 1 NFiles =    16 SizExt =    524288 WInBlk =    131072
+                   defal = F LstWrd =     2228224 FType=2 FMxFil=10000
+
+ Number              0           501           502           598           801           988
+ Base          2097152        917504       1572864       1703936       1966080       1179648
+ End           2228224        918504       1576969       1703938       1966086       1249652
+ End1          2228224       1048576       1703936       1835008       2097152       1310720
+ Wr Pntr       2097152        917504       1572968       1703936       1966080       1179648
+ Rd Pntr       2097152        917504       1572864       1703936       1966080       1249652
+ Length         131072          1000          4105             2             6         70004
+ Int.Num             1             2             3             4             5             6
+
+ Number            989           991           992           993           994           995
+ Base          1048576       1441792       1310720        786432        131072        655360
+ End           1068576       1448354       1310730        786632        131102        655380
+ End1          1179648       1572864       1441792        917504        262144        786432
+ Wr Pntr       1048576       1441792       1310720        786432        131072        655360
+ Rd Pntr       1048576       1448354       1310730        786632        131102        655380
+ Length          20000          6562            10           200            30            20
+ Int.Num             7             8             9            10            11            12
+
+ Number            996           997           998           999
+ Base           393216        524288        262144       1835008
+ End            393416        524458        262344       1937512
+ End1           524288        655360        393216       1966080
+ Wr Pntr        393216        524288        262344       1835008
+ Rd Pntr        393416        524458        262344       1837512
+ Length            200           170           200        102504
+ Int.Num            13            14            15            16
+
+
+ dumping /fiocom/, unit = 2 NFiles =     1 SizExt =         0 WInBlk =    131072
+                   defal = F LstWrd =      262144 FType=2 FMxFil=10000
+
+ Number              0
+ Base           131072
+ End            262144
+ End1           262144
+ Wr Pntr        131072
+ Rd Pntr        131072
+ Length         131072
+ Int.Num             1
+
+
+ dumping /fiocom/, unit = 3 NFiles =     1 SizExt =    524288 WInBlk =    131072
+                   defal = F LstWrd =      262144 FType=2 FMxFil=10000
+
+ Number              0
+ Base           131072
+ End            262144
+ End1           262144
+ Wr Pntr        131072
+ Rd Pntr        131072
+ Length         131072
+ Int.Num             1
+ FileIO operation on non-existent file.
+ FileIO: IOper= 2 IFilNo(1)=-20997 Len=          20 IPos=           0 Q=  140722674060368
+ Error termination in NtrErr:
+ NtrErr Called from FileIO.

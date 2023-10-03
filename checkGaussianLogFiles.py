@@ -26,6 +26,9 @@ DESCRIPTION = 'None'
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
 NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
 PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job step number\s+', re.DOTALL)
+FILEIO_ERROR_NON_EXISTENT_FILE = re.compile(r'\s+FileIO operation on non-existent file', re.DOTALL)
+ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -77,18 +80,26 @@ def process_text(text: str) -> None:
 
     print(f'\tNumber of link statements\t\t{n_links}')
     print(f'\tNumber of termination statements:\t{n_term}\n')
+
     print('\tLine-by-line analysis:')
     for i, line in enumerate(lines):
         if re.match(LINK_PATTERN, line) is not None:
-            print(f'\t\tLINK\t\t{i+1}')
+            print(f'\t\tENTER LINK\t\t\t{i+1}')
             termination_indicator_lines.append(i)
 
         elif re.match(NORM_TERM_PATTERN, line) is not None:
-            print(f'\t\tNORM TERM\t{i+1}')
+            print(f'\t\tNORM TERM\t\t\t{i+1}')
 
         elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            print(f'\t\tINTERNAL JOB\t{i+1}')
+            print(f'\t\tENTER INTERNAL JOB\t\t\t{i+1}')
             termination_indicator_lines.append(i)
+
+        elif re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
+            print(f'\t\tFileIO Error (non-existent)\t{i+1}')
+
+        elif re.match(ERRORNEOUS_WRITE, line) is not None:
+            print(f'\t\tERRONEOUS WRITE\t\t\t{i+1}')
+
         else:
             pass
 
