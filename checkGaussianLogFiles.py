@@ -72,7 +72,7 @@ def process_text(text: str) -> None:
     lines = text.split('\n')
 
     # Lines after which a normal termination should appear
-    termination_indicator_lines = []
+    calc_start_line = []
 
     # Get number of links/terminations
     n_links = get_n_links(text)
@@ -85,14 +85,14 @@ def process_text(text: str) -> None:
     for i, line in enumerate(lines):
         if re.match(LINK_PATTERN, line) is not None:
             print(f'\t\tENTER LINK\t\t\t{i+1}')
-            termination_indicator_lines.append(i)
+            calc_start_line.append(i)
 
         elif re.match(NORM_TERM_PATTERN, line) is not None:
             print(f'\t\tNORM TERM\t\t\t{i+1}')
 
         elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
             print(f'\t\tENTER INTERNAL JOB\t\t\t{i+1}')
-            termination_indicator_lines.append(i)
+            calc_start_line.append(i)
 
         elif re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
             print(f'\t\tFileIO Error (non-existent)\t{i+1}')
@@ -123,6 +123,51 @@ def get_job_start_line_numbers(text: str) -> list[int]:
             pass
 
     return termination_indicator_lines
+
+def get_job_error_line_numbers(text: str) -> list[int]:
+    '''
+    Gets the line numbers that indicate an error has
+    occured.
+    '''
+    lines = text.split('\n')
+
+    # Lines after which a normal termination should appear
+    error_lines = []
+
+    for i, line in enumerate(lines):
+        if re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
+            error_lines.append(i)
+
+        elif re.match(ERRORNEOUS_WRITE, line) is not None:
+            error_lines.append(i)
+
+        else:
+            pass
+
+    return error_lines
+
+def get_job_start_line_numbers(text: str) -> list[int]:
+    '''
+    Gets the line numbers that indicate a new link
+    or an internal job. Successful calculations should
+    have a "Normal termination" line after each of these.
+    '''
+    lines = text.split('\n')
+
+    # Lines after which a normal termination should appear
+    termination_indicator_lines = []
+
+    for i, line in enumerate(lines):
+        if re.match(LINK_PATTERN, line) is not None:
+            termination_indicator_lines.append(i)
+        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
+            termination_indicator_lines.append(i)
+        else:
+            pass
+
+    return termination_indicator_lines
+
+
 
 def get_termination_line_numbers(text: str) -> list[int]:
     '''
@@ -175,8 +220,8 @@ def main(args) -> None:
             # Get the file text
             text = get_file_text(file)
 
+            # Print the debug information
             process_text(text)
-
             print('\n')
 
 
@@ -192,17 +237,28 @@ def main(args) -> None:
         # and normal termination lines appear
         term_lines = get_termination_line_numbers(text)
         job_lines = get_job_start_line_numbers(text)
+        error_lines = get_job_error_line_numbers(text)
 
-        # iterate over the lines that
+        # iterate over the lines that indicate a job started
         for i, job_start in enumerate(job_lines):
 
-            # If the job start line is not proceeded by
-            # a normal termination line, that job failed
+            # If an error was found in the file
+            # Before a job start line could be
+            # proceeded by a normal termination line,
+            # that job has failed because of the error line
+            try:
+                if job_start < error_lines[i]:
+                    failed[file] = f'Job on line {job_start+i} had an error'
+                    break
+            except IndexError as e:
+                pass
+
+            # Check if a termination line proceeded the job start line
             try:
                 if job_start > term_lines[i]:
                     failed[file] = f'Job on line {job_start+1} failed.'
             except IndexError:
-                failed[file] = f'Job on line {job_start+1} failed'
+                failed[file] = f'Job on line {job_start+1} failed.'
 
 
         # Check if the logic above put the file
