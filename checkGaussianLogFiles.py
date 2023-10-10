@@ -330,7 +330,8 @@ def main(args) -> None:
                 print(chk_file.name)
                 chk_file.unlink()
 
-    print(round(time.time() - t1,2))
+    if args.debug:
+        print(f'Total time (s): {round(time.time() - t1,2)}')
 
 if __name__ == "__main__":
     args = get_args()
