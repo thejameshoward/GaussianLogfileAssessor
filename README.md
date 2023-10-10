@@ -1,5 +1,5 @@
 # GaussianLogfileAssessor
-This script provides useful information about Gaussian 16 .log files including whether or not all planned calculations (or internal Gaussian jobs) completed. By default, the script moves the completed and failed fails along with any corresponding input (.com) files to their respective `failed` and `completed` directories.
+This script provides useful information about Gaussian 16 .log files including whether or not all planned calculations (or internal Gaussian jobs) terminated successfully. By default, the script moves the completed and failed log files, coms, and .chk files to their respective `failed` and `completed` directories.
 <br>
 <br>
 
@@ -11,7 +11,7 @@ This script provides useful information about Gaussian 16 .log files including w
 
 2.  Make the assessment script executable.
 
-    ```chmod +x GaussianLogfileAssesor/checkGaussianLogFiles.py```
+    ```chmod +x GaussianLogfileAssessor/checkGaussianLogFiles.py```
 
 3.  Copy the assessment script to a directory on your PATH environment variable.
 
@@ -52,6 +52,6 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ```--dry```&nbsp;&nbsp;&nbsp;&nbsp;Disable the creation of new folders and moving files. Useful for inspecting files.
 
-```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Enables dev level debugging to be printed to the terminal.
+```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Prints detailed file and debug information to the terminal.
 
 ```--deletechk```&nbsp;&nbsp;&nbsp;&nbsp;Deletes .chk files of log files for both completed and not completed jobs (EXPERIMENTAL).
