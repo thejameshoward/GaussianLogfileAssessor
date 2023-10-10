@@ -6,7 +6,6 @@ Analyzes Gaussian .log files
 '''
 
 from __future__ import annotations
-from multiprocessing.sharedctypes import Value
 
 import re
 import time
@@ -23,7 +22,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-DESCRIPTION = 'None'
+DESCRIPTION = '🦝 Analyzes Gaussian 16 log files for common errors 🦝.'
 
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
 NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
@@ -50,7 +49,7 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('-i', '--input',
                         dest='input',
-                        help='Directory to analyze. (default=cwd)\n\n')
+                        help='Directory/file to analyze. (default=cwd)\n\n')
 
     parser.add_argument('--debug',
                         action='store_true',
@@ -69,7 +68,9 @@ def get_args() -> argparse.Namespace:
     return args
 
 def get_file_text(file: Path) -> str:
-    '''Gets the raw text from the file'''
+    '''
+    Gets the raw text from the file.
+    '''
     with open(file, 'r') as infile:
         return infile.read()
 
@@ -77,33 +78,24 @@ def process_text(text: str) -> None:
     '''Detailed debugging info on a file'''
     lines = text.split('\n')
 
-    # Lines after which a normal termination should appear
-    calc_start_line = []
-
-    # Get number of links/terminations
-    n_links = get_n_links(text)
-    n_term = get_n_normal_terminations(text)
-
-    print(f'\tNumber of link statements\t\t{n_links}')
-    print(f'\tNumber of termination statements:\t{n_term}\n')
+    print(f'\tNumber of link statements\t\t{get_n_links(text)}')
+    print(f'\tNumber of termination statements:\t{get_n_normal_terminations(text)}\n')
 
     print('\tLine-by-line analysis:')
     for i, line in enumerate(lines):
         if re.match(LINK_PATTERN, line) is not None:
             print(f'\t\tENTER LINK\t\t\t{i+1}')
-            calc_start_line.append(i)
-
-        elif re.match(NORM_TERM_PATTERN, line) is not None:
-            print(f'\t\tNORM TERM\t\t\t{i+1}')
 
         elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
             print(f'\t\tENTER INTERNAL JOB\t\t\t{i+1}')
-            calc_start_line.append(i)
 
-        elif re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
+        elif ' Normal termination of Gaussian 16' in line:
+            print(f'\t\tNORM TERM\t\t\t{i+1}')
+
+        elif 'FileIO operation on non-existent file' in line:
             print(f'\t\tFileIO Error (non-existent)\t{i+1}')
 
-        elif re.match(ERRORNEOUS_WRITE, line) is not None:
+        elif 'Erroneous write.' in line:
             print(f'\t\tERRONEOUS WRITE\t\t\t{i+1}')
 
         else:
@@ -141,37 +133,14 @@ def get_job_error_line_numbers(text: str) -> list[int]:
     error_lines = []
 
     for i, line in enumerate(lines):
+
         if re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
             error_lines.append(i)
 
         elif re.match(ERRORNEOUS_WRITE, line) is not None:
             error_lines.append(i)
 
-        else:
-            pass
-
     return error_lines
-
-def get_job_start_line_numbers(text: str) -> list[int]:
-    '''
-    Gets the line numbers that indicate a new link
-    or an internal job. Successful calculations should
-    have a "Normal termination" line after each of these.
-    '''
-    lines = text.split('\n')
-
-    # Lines after which a normal termination should appear
-    termination_indicator_lines = []
-
-    for i, line in enumerate(lines):
-        if re.match(LINK_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-        else:
-            pass
-
-    return termination_indicator_lines
 
 def get_termination_line_numbers(text: str) -> list[int]:
     '''
@@ -184,7 +153,7 @@ def get_termination_line_numbers(text: str) -> list[int]:
     # Lines after which a normal termination should appear
     terms = []
     for i, line in enumerate(lines):
-        if re.match(NORM_TERM_PATTERN, line) is not None:
+        if ' Normal termination of Gaussian 16' in line:
             terms.append(i)
     return terms
 
@@ -198,28 +167,23 @@ def has_imaginary_frequency(text: str) -> bool:
     '''
     Determines if log file has imaginary frequencies
     '''
-    freqs = re.findall(FREQ_START_PATTERN, text)
-
-    if len(freqs) == 0:
-        raise ValueError(f'File does not have any frequencies.')
-
-    freqs = [re.sub('\s+', ' ', f).strip() for f in freqs]
-    freqs = [re.split(' ', x) for x in freqs]
-    freqs = [float(f) for freq_list in freqs for f in freq_list]
-    if min(freqs) <= 0:
-        return True
-    return False
+    return float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0
 
 def has_frequency_section(text: str) -> bool:
     '''
     Determines if log file has a frequency section
     '''
-    freqs = re.findall(FREQ_START_PATTERN, text)
+    return re.search(FREQ_START_PATTERN, text) is not None
 
-    if len(freqs) == 0:
-        return False
+def print_line_by_line_analysis(file: Path, text: str):
+    # For printing headers
+    len_file_name = len(file.name)
+    spacer = (80 - len_file_name) / 2
+    print('-'* math.ceil(spacer) + file.name + '-'* math.floor(spacer))
 
-    return True
+    # Print the debug information
+    process_text(text)
+    print('\n')
 
 def main(args) -> None:
 
@@ -243,33 +207,22 @@ def main(args) -> None:
     if len(files) == 0:
         raise FileNotFoundError(f'No log files found in {parent_dir.absolute()}')
 
-    # Detailed line-by-line analysis section
-    if args.debug:
-        # Process the files
-        for file in files:
-            # For printing headers
-            len_file_name = len(file.name)
-            spacer = (80 - len_file_name) / 2
-            print('-'* math.ceil(spacer) + file.name + '-'* math.floor(spacer))
-
-            # Get the file text
-            text = get_file_text(file)
-
-            # Print the debug information
-            process_text(text)
-            print('\n')
-
     # Sort into failed dicts with files as
     # keys and reasons as values. Completed
     # is just a list of Paths
     failed = {}
     completed = []
     print(f'Analyzing {len(files)} files...')
+
     if len(files) >= 200:
         print(f'This may take a minute.')
+
     for file in files:
         # Get the file text
         text = get_file_text(file)
+
+        if args.debug:
+            print_line_by_line_analysis(file, text)
 
         # Get the lines at which jobs start
         # and normal termination lines appear
@@ -279,10 +232,10 @@ def main(args) -> None:
 
         if has_frequency_section(text):
             if has_imaginary_frequency(text):
-                failed[file] = 'Imaginary frequency'
+                failed[file] = 'has an imaginary frequency'
                 continue
 
-        # iterate over the lines that indicate a job started
+        # Iterate over the lines that indicate a job started
         for i, job_start in enumerate(job_lines):
 
             # If an error was found in the file
@@ -315,9 +268,9 @@ def main(args) -> None:
             print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC} failed because {reason}')
 
     print('\n')
-    print(f'TOTAL:\t\t{len(files)}')
-    print(f'COMPLETED:\t{len(completed)} ({len(completed)} of {len(files)})')
-    print(f'FAILED:\t\t{len(failed)} ({len(failed)} of {len(files)})')
+    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
+    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
+    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
     print('\n')
 
     if not args.dry:
@@ -376,6 +329,8 @@ def main(args) -> None:
             if chk_file.exists():
                 print(chk_file.name)
                 chk_file.unlink()
+
+    print(round(time.time() - t1,2))
 
 if __name__ == "__main__":
     args = get_args()
