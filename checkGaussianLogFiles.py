@@ -6,8 +6,10 @@ Analyzes Gaussian .log files
 '''
 
 from __future__ import annotations
+from multiprocessing.sharedctypes import Value
 
 import re
+import time
 import math
 import shutil
 import argparse
@@ -28,7 +30,7 @@ NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
 PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job step number\s+', re.DOTALL)
 FILEIO_ERROR_NON_EXISTENT_FILE = re.compile(r'\s+FileIO operation on non-existent file', re.DOTALL)
 ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
-
+FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
 
 class bcolors:
     HEADER = '\033[95m'
@@ -57,6 +59,10 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--dry',
                         action='store_true',
                         help='Disables creation of directories and file movement\n\n')
+
+    parser.add_argument('--deletechk',
+                        action='store_true',
+                        help='Deletes ALL large .chk files that have a corresponding log instead of moving them.\n\n')
 
     args = parser.parse_args()
 
@@ -167,8 +173,6 @@ def get_job_start_line_numbers(text: str) -> list[int]:
 
     return termination_indicator_lines
 
-
-
 def get_termination_line_numbers(text: str) -> list[int]:
     '''
     Gets the line numbers that indicate a new link
@@ -191,9 +195,38 @@ def get_n_links(text: str) -> int:
     return len(re.findall(LINK_PATTERN, text))
 
 def has_imaginary_frequency(text: str) -> bool:
+    '''
+    Determines if log file has imaginary frequencies
+    '''
+    freqs = re.findall(FREQ_START_PATTERN, text)
+
+    if len(freqs) == 0:
+        raise ValueError(f'File does not have any frequencies.')
+
+    freqs = [re.sub('\s+', ' ', f).strip() for f in freqs]
+    freqs = [re.split(' ', x) for x in freqs]
+    freqs = [float(f) for freq_list in freqs for f in freq_list]
+    if min(freqs) <= 0:
+        return True
     return False
 
+def has_frequency_section(text: str) -> bool:
+    '''
+    Determines if log file has a frequency section
+    '''
+    freqs = re.findall(FREQ_START_PATTERN, text)
+
+    if len(freqs) == 0:
+        return False
+
+    return True
+
 def main(args) -> None:
+
+    # Note the time
+    t1 = time.time()
+
+    # Input parsing
     if args.input is None:
         parent_dir = Path().cwd()
     else:
@@ -201,14 +234,16 @@ def main(args) -> None:
 
     # Check if its a single file
     if not parent_dir.is_dir():
-        raise TypeError(f'{parent_dir.absolute()} is not a directory.')
-
-    # Get all the log files
-    files = [x for x in parent_dir.glob('*.log')]
+        if not parent_dir.suffix == '.log':
+            raise TypeError('Input must be a directory of G16 log files or a single log file.')
+        files = [parent_dir]    # Convert to list for later logic
+    else:
+        files = [x for x in parent_dir.glob('*.log')] # Get all the log files
 
     if len(files) == 0:
         raise FileNotFoundError(f'No log files found in {parent_dir.absolute()}')
 
+    # Detailed line-by-line analysis section
     if args.debug:
         # Process the files
         for file in files:
@@ -224,11 +259,14 @@ def main(args) -> None:
             process_text(text)
             print('\n')
 
-
     # Sort into failed dicts with files as
-    # keys and reasons as values
+    # keys and reasons as values. Completed
+    # is just a list of Paths
     failed = {}
     completed = []
+    print(f'Analyzing {len(files)} files...')
+    if len(files) >= 200:
+        print(f'This may take a minute.')
     for file in files:
         # Get the file text
         text = get_file_text(file)
@@ -238,6 +276,11 @@ def main(args) -> None:
         term_lines = get_termination_line_numbers(text)
         job_lines = get_job_start_line_numbers(text)
         error_lines = get_job_error_line_numbers(text)
+
+        if has_frequency_section(text):
+            if has_imaginary_frequency(text):
+                failed[file] = 'Imaginary frequency'
+                continue
 
         # iterate over the lines that indicate a job started
         for i, job_start in enumerate(job_lines):
@@ -259,7 +302,6 @@ def main(args) -> None:
                     failed[file] = f'Job on line {job_start+1} failed.'
             except IndexError:
                 failed[file] = f'Job on line {job_start+1} failed.'
-
 
         # Check if the logic above put the file
         # in the failed dict. If it didnt, it must
@@ -297,6 +339,12 @@ def main(args) -> None:
             if not args.dry:
                 shutil.move(parent_dir / file.with_suffix(".com").name, completed_dir / file.with_suffix(".com").name)
 
+        if not args.deletechk:
+            if file.with_suffix('.chk').exists():
+                print(f'{bcolors.OKGREEN}{file.with_suffix(".chk").name}{bcolors.ENDC}')
+                if not args.dry:
+                    shutil.move(parent_dir / file.with_suffix(".chk").name, completed_dir / file.with_suffix(".chk").name)
+
     print('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
     for file in failed.keys():
 
@@ -309,7 +357,39 @@ def main(args) -> None:
             if not args.dry:
                 shutil.move(parent_dir / file.with_suffix(".com").name, failed_dir / file.with_suffix(".com").name)
 
+        if not args.deletechk:
+            if file.with_suffix('.chk').exists():
+                print(f'{bcolors.FAIL}{file.with_suffix(".chk").name}{bcolors.ENDC}')
+                if not args.dry:
+                    shutil.move(parent_dir / file.with_suffix(".chk").name, failed_dir / file.with_suffix(".chk").name)
+
+    if args.deletechk:
+        print('-------------------------------DELETING CHK FILES-------------------------------')
+        for file in failed.keys():
+            chk_file = file.with_suffix('.chk')
+            if chk_file.exists():
+                print(chk_file.name)
+                chk_file.unlink()
+
+        for file in completed:
+            chk_file = file.with_suffix('.chk')
+            if chk_file.exists():
+                print(chk_file.name)
+                chk_file.unlink()
+
 if __name__ == "__main__":
     args = get_args()
+
+    if args.deletechk:
+        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\n{bcolors.ENDC}')
+        print(f'{bcolors.WARNING}You have selected to delete .chk files. This action is permanent.{bcolors.ENDC}')
+        print(f'{bcolors.WARNING}This feature is experimental and has not been fully tested.{bcolors.ENDC}')
+        print(f'{bcolors.WARNING}Copy your data to a safe location before proceeding.{bcolors.ENDC}')
+        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\t{bcolors.ENDC}')
+        response = input('Proceed (YES/no)?: ')
+
+        if response.casefold() not in ['y', 'yes']:
+            print(f'EXITING')
+            exit()
 
     main(args)

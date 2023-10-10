@@ -24,19 +24,25 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ## Examples
 
-1.  Run the script in the directory containing your Gaussian 16 log files.
+1.  Run the script on different directory containing your Gaussian 16 log files without moving any files (recommended).
 
-    ```checkGaussianLogFiles.py```
+    ```checkGaussianLogFiles.py -i data/ --dry```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/example.png?raw=true)
 
-2.  Run the script on different directory containing your Gaussian 16 log files without moving any files.
+2.  Run the same analysis and move files into respective directories.
 
-    ```checkGaussianLogFiles.py -i data/ --dry```
+    ```checkGaussianLogFiles.py -i data/```
 
 3.  Enable detailed analysis of each file.
 
     ```checkGaussianLogFiles.py -i data/ --debug```
+
+    ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
+
+3.  Enable the deletion of .chk files that have a corresponding .log file (EXPERIMENTAL)
+
+    ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
 
@@ -47,3 +53,5 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 ```--dry```&nbsp;&nbsp;&nbsp;&nbsp;Disable the creation of new folders and moving files. Useful for inspecting files.
 
 ```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Enables dev level debugging to be printed to the terminal.
+
+```--deletechk```&nbsp;&nbsp;&nbsp;&nbsp;Deletes .chk files of log files for both completed and not completed jobs (EXPERIMENTAL).
