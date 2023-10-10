@@ -40,7 +40,13 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
 
-3.  Enable the deletion of .chk files that have a corresponding .log file (EXPERIMENTAL)
+4.  Run the analysis on a single log file
+
+    ```checkGaussianLogFiles.py -i data/james.log --debug --dry```
+
+    ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
+
+5.  Enable the deletion of .chk files that have a corresponding .log file (EXPERIMENTAL)
 
     ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
