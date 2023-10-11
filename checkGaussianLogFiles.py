@@ -74,33 +74,6 @@ def get_file_text(file: Path) -> str:
     with open(file, 'r') as infile:
         return infile.read()
 
-def process_text(text: str) -> None:
-    '''Detailed debugging info on a file'''
-    lines = text.split('\n')
-
-    print(f'\tNumber of link statements\t\t{get_n_links(text)}')
-    print(f'\tNumber of termination statements:\t{get_n_normal_terminations(text)}\n')
-
-    print('\tLine-by-line analysis:')
-    for i, line in enumerate(lines):
-        if re.match(LINK_PATTERN, line) is not None:
-            print(f'\t\tENTER LINK\t\t\t{i+1}')
-
-        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            print(f'\t\tENTER INTERNAL JOB\t\t\t{i+1}')
-
-        elif ' Normal termination of Gaussian 16' in line:
-            print(f'\t\tNORM TERM\t\t\t{i+1}')
-
-        elif 'FileIO operation on non-existent file' in line:
-            print(f'\t\tFileIO Error (non-existent)\t{i+1}')
-
-        elif 'Erroneous write.' in line:
-            print(f'\t\tERRONEOUS WRITE\t\t\t{i+1}')
-
-        else:
-            pass
-
 def get_job_start_line_numbers(text: str) -> list[int]:
     '''
     Gets the line numbers that indicate a new link
@@ -129,7 +102,6 @@ def get_job_error_line_numbers(text: str) -> list[int]:
     '''
     lines = text.split('\n')
 
-    # Lines after which a normal termination should appear
     error_lines = []
 
     for i, line in enumerate(lines):
@@ -176,13 +148,38 @@ def has_frequency_section(text: str) -> bool:
     return re.search(FREQ_START_PATTERN, text) is not None
 
 def print_line_by_line_analysis(file: Path, text: str):
+
     # For printing headers
     len_file_name = len(file.name)
     spacer = (80 - len_file_name) / 2
     print('-'* math.ceil(spacer) + file.name + '-'* math.floor(spacer))
 
     # Print the debug information
-    process_text(text)
+    lines = text.split('\n')
+
+    print(f'\tNumber of link statements\t\t{get_n_links(text)}')
+    print(f'\tNumber of termination statements:\t{get_n_normal_terminations(text)}\n')
+
+    print('\tLine-by-line analysis:')
+    for i, line in enumerate(lines):
+        if re.match(LINK_PATTERN, line) is not None:
+            print(f'\t\tENTER LINK\t\t\t{i+1}')
+
+        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
+            print(f'\t\tINTERNAL JOB\t\t\t{i+1}')
+
+        elif ' Normal termination of Gaussian 16' in line:
+            print(f'\t\tNORM TERM\t\t\t{i+1}')
+
+        elif 'FileIO operation on non-existent file' in line:
+            print(f'\t\tFileIO Error (non-existent)\t{i+1}')
+
+        elif 'Erroneous write.' in line:
+            print(f'\t\tERRONEOUS WRITE\t\t\t{i+1}')
+
+        else:
+            pass
+
     print('\n')
 
 def main(args) -> None:
@@ -220,14 +217,15 @@ def main(args) -> None:
     for file in files:
         # Get the file text
         text = get_file_text(file)
+        split_text = text.split('\n')
 
         if args.debug:
             print_line_by_line_analysis(file, text)
 
         # Get the lines at which jobs start
         # and normal termination lines appear
-        term_lines = get_termination_line_numbers(text)
         job_lines = get_job_start_line_numbers(text)
+        term_lines = get_termination_line_numbers(text)
         error_lines = get_job_error_line_numbers(text)
 
         if has_frequency_section(text):
@@ -235,26 +233,23 @@ def main(args) -> None:
                 failed[file] = 'has an imaginary frequency'
                 continue
 
+        # If a specific error can be identified
+        # use the text of the line as the "reason"
+        if len(error_lines) != 0:
+            for i in error_lines:
+                failed[file] = split_text[i].strip() + f' (line {i})'
+                break
+            continue
+
         # Iterate over the lines that indicate a job started
         for i, job_start in enumerate(job_lines):
-
-            # If an error was found in the file
-            # Before a job start line could be
-            # proceeded by a normal termination line,
-            # that job has failed because of the error line
-            try:
-                if job_start < error_lines[i]:
-                    failed[file] = f'Job on line {job_start+i} had an error'
-                    break
-            except IndexError as e:
-                pass
 
             # Check if a termination line proceeded the job start line
             try:
                 if job_start > term_lines[i]:
-                    failed[file] = f'Job on line {job_start+1} failed.'
+                    failed[file] = f'job on line {job_start+1} failed.'
             except IndexError:
-                failed[file] = f'Job on line {job_start+1} failed.'
+                failed[file] = f'job on line {job_start+1} failed.'
 
         # Check if the logic above put the file
         # in the failed dict. If it didnt, it must
@@ -276,9 +271,11 @@ def main(args) -> None:
     if not args.dry:
         # Make the new folders
         completed_dir = parent_dir / 'completed'
+        if not completed_dir.exists():
+            completed_dir.mkdir()
         failed_dir = parent_dir / 'failed'
-        completed_dir.mkdir()
-        failed_dir.mkdir()
+        if not failed.exists():
+            failed_dir.mkdir()
 
     print('-----------------------FILES MOVED TO COMPLETED DIRECTORY-----------------------')
     for file in completed:
