@@ -274,7 +274,7 @@ def main(args) -> None:
         if not completed_dir.exists():
             completed_dir.mkdir()
         failed_dir = parent_dir / 'failed'
-        if not failed.exists():
+        if not failed_dir.exists():
             failed_dir.mkdir()
 
     print('-----------------------FILES MOVED TO COMPLETED DIRECTORY-----------------------')
