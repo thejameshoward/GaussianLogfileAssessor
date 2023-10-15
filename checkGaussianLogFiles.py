@@ -30,6 +30,7 @@ PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job
 FILEIO_ERROR_NON_EXISTENT_FILE = re.compile(r'\s+FileIO operation on non-existent file', re.DOTALL)
 ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
 FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
+N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep= \d+')
 
 class bcolors:
     HEADER = '\033[95m'
@@ -112,6 +113,9 @@ def get_job_error_line_numbers(text: str) -> list[int]:
         elif re.match(ERRORNEOUS_WRITE, line) is not None:
             error_lines.append(i)
 
+        elif re.match(N_STEPS_EXCEEDED, line) is not None:
+            error_lines.append(i)
+
     return error_lines
 
 def get_termination_line_numbers(text: str) -> list[int]:
@@ -182,6 +186,11 @@ def print_line_by_line_analysis(file: Path, text: str):
 
     print('\n')
 
+def _is_logfile_complete(split_text: list[str]) -> bool:
+    if 'Normal termination of Gaussian 16' in split_text[-1]:
+        return True
+    return False
+
 def main(args) -> None:
 
     # Note the time
@@ -221,6 +230,9 @@ def main(args) -> None:
 
         if args.debug:
             print_line_by_line_analysis(file, text)
+
+        if not _is_logfile_complete(split_text):
+            failed[file] = 'Is not a complete logfile. Is the job running?'
 
         # Get the lines at which jobs start
         # and normal termination lines appear
