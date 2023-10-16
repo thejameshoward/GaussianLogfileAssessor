@@ -187,7 +187,7 @@ def print_line_by_line_analysis(file: Path, text: str):
     print('\n')
 
 def _is_logfile_complete(split_text: list[str]) -> bool:
-    if 'Normal termination of Gaussian 16' in split_text[-1]:
+    if 'Normal termination of Gaussian 16' in split_text[-1] or 'Normal termination of Gaussian 16' in split_text[-2]:
         return True
     return False
 
@@ -232,7 +232,7 @@ def main(args) -> None:
             print_line_by_line_analysis(file, text)
 
         if not _is_logfile_complete(split_text):
-            failed[file] = 'Is not a complete logfile. Is the job running?'
+            failed[file] = 'is not a complete logfile. Is the job running?'
             continue
 
         # Get the lines at which jobs start
