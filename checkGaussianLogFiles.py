@@ -233,7 +233,6 @@ def main(args) -> None:
 
         if not _is_logfile_complete(split_text):
             failed[file] = 'is not a complete logfile. Is the job running?'
-            continue
 
         # Get the lines at which jobs start
         # and normal termination lines appear
