@@ -187,7 +187,28 @@ def print_line_by_line_analysis(file: Path, text: str):
     print('\n')
 
 def _is_logfile_complete(split_text: list[str]) -> bool:
+    if split_text == ['']:
+        return False
+
     if 'Normal termination of Gaussian 16' in split_text[-1] or 'Normal termination of Gaussian 16' in split_text[-2]:
+        return True
+
+    return False
+
+def get_slurm_out_file(file: Path) -> Path:
+    files = [x for x in file.parent.glob('*out*') if file.stem in x.name]
+
+    # Check if only one output file exists
+    if len(files) != 1:
+        print(f'{bcolors.FAIL}WARNING: Multiple SLURM output files identified for {file.name}.{bcolors.ENDC}')
+
+    return files[0]
+
+def job_preempted(file: Path) -> bool:
+    with open(get_slurm_out_file(file), 'r') as infile:
+        lines = infile.readlines()
+
+    if 'PREEMPTION' in lines[-1]:
         return True
     return False
 
@@ -224,6 +245,12 @@ def main(args) -> None:
         print(f'This may take a minute.')
 
     for file in files:
+
+        # Check if preempted
+        if job_preempted(file):
+            failed[file] = 'was preempted.'
+            continue
+
         # Get the file text
         text = get_file_text(file)
         split_text = text.split('\n')
@@ -231,6 +258,7 @@ def main(args) -> None:
         if args.debug:
             print_line_by_line_analysis(file, text)
 
+        # TODO this line is essentially ignored if a "failure" is detected by later logic
         if not _is_logfile_complete(split_text):
             failed[file] = 'is not a complete logfile. Is the job running?'
 
@@ -240,6 +268,8 @@ def main(args) -> None:
         term_lines = get_termination_line_numbers(text)
         error_lines = get_job_error_line_numbers(text)
 
+        # Check if there is a freq section before
+        # parsing the lowest frequency
         if has_frequency_section(text):
             if has_imaginary_frequency(text):
                 failed[file] = 'has an imaginary frequency'
