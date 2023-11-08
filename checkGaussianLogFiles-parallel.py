@@ -15,13 +15,6 @@ import argparse
 
 from pathlib import Path
 
-try:
-    import psutil
-    proc = psutil.Process()
-    proc.cpu_affinity([proc.cpu_affinity()[0]])
-except ModuleNotFoundError:
-    pass
-
 DESCRIPTION = '🦝 Analyzes Gaussian 16 log files for common errors 🦝.'
 
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
@@ -252,150 +245,81 @@ def main(args) -> None:
     if len(files) >= 200:
         print(f'This may take a minute.')
 
-    for file in files:
 
-        # Check if preempted
-        if job_preempted(file):
-            failed[file] = 'was preempted.'
-            continue
+    import pymp
 
-        # Get the file text
-        try:
-            text = get_file_text(file)
-        except UnicodeDecodeError:
-            failed[file] = 'UNICODE DECODE ERROR. CHECK FILE MANUALLY'
-        split_text = text.split('\n')
+    failed = pymp._shared.dict()
+    completed = pymp._shared.list()
+    with pymp.Parallel() as p:
+        for file in p.iterate(files):
 
-        if args.debug:
-            print_line_by_line_analysis(file, text)
-
-        # TODO this line is essentially ignored if a "failure" is detected by later logic
-        if not _is_logfile_complete(split_text):
-            failed[file] = 'is not a complete logfile. Is the job running?'
-
-        # Get the lines at which jobs start
-        # and normal termination lines appear
-        job_lines = get_job_start_line_numbers(text)
-        term_lines = get_termination_line_numbers(text)
-        error_lines = get_job_error_line_numbers(text)
-
-        # Check if there is a freq section before
-        # parsing the lowest frequency
-        if has_frequency_section(text):
-            if has_imaginary_frequency(text):
-                failed[file] = 'has an imaginary frequency'
+            # Get the file text
+            try:
+                text = get_file_text(file)
+            except UnicodeDecodeError:
+                with p.lock:
+                    failed[file] = 'CANNOT OPEN FILE'
                 continue
 
-        # If a specific error can be identified
-        # use the text of the line as the "reason"
-        if len(error_lines) != 0:
-            for i in error_lines:
-                failed[file] = split_text[i].strip() + f' (line {i})'
-                break
-            continue
+            split_text = text.split('\n')
 
-        # Iterate over the lines that indicate a job started
-        for i, job_start in enumerate(job_lines):
+            # TODO this line is essentially ignored if a "failure" is detected by later logic
+            if not _is_logfile_complete(split_text):
+                with p.lock:
+                    failed[file] = 'is not a complete logfile. Is the job running?'
+                continue
 
-            # Check if a termination line proceeded the job start line
-            try:
-                if job_start > term_lines[i]:
-                    failed[file] = f'job on line {job_start+1} failed.'
-            except IndexError:
-                failed[file] = f'job on line {job_start+1} failed.'
+            # Get the lines at which jobs start
+            # and normal termination lines appear
+            job_lines = get_job_start_line_numbers(text)
+            term_lines = get_termination_line_numbers(text)
+            error_lines = get_job_error_line_numbers(text)
 
-        # Check if the logic above put the file
-        # in the failed dict. If it didnt, it must
-        # have completed
-        if file not in failed.keys():
-            completed.append(file)
+            # Check if there is a freq section before
+            # parsing the lowest frequency
+            if has_frequency_section(text):
+                if has_imaginary_frequency(text):
+                    with p.lock:
+                        failed[file] = 'has an imaginary frequency'
+                    continue
+
+            # If a specific error can be identified
+            # use the text of the line as the "reason"
+            if len(error_lines) != 0:
+                with p.lock:
+                    failed[file] = split_text[error_lines[-1]].strip() + f' (line {error_lines[-1]})'
+                continue
+
+            # Iterate over the lines that indicate a job started
+            for i, job_start in enumerate(job_lines):
+
+                # Check if a termination line proceeded the job start line
+                try:
+                    if job_start > term_lines[i]:
+                        with p.lock:
+                            failed[file] = f'job on line {job_start+1} failed.'
+                        continue
+                except IndexError:
+                    with p.lock:
+                        failed[file] = f'job on line {job_start+1} failed.'
+                    continue
+
+            # Check if the logic above put the file
+            # in the failed dict. If it didnt, it must
+            # have completed
+            with p.lock:
+                completed.append(file)
+
+
+    completed = list(completed)
+    failed = dict(failed)
 
     print('------------------------------------OVERVIEW------------------------------------')
-    if len(failed) != 0:
-        for file, reason in failed.items():
-            print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC} failed because {reason}')
+    for k,v in failed.items():
+        print(f'{k.name}\t\t{v}')
 
-    print('\n')
-    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
-    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
-    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
-    print('\n')
-
-    if not args.dry:
-        # Make the new folders
-        completed_dir = parent_dir / 'completed'
-        if not completed_dir.exists():
-            completed_dir.mkdir()
-        failed_dir = parent_dir / 'failed'
-        if not failed_dir.exists():
-            failed_dir.mkdir()
-
-    print('-----------------------FILES MOVED TO COMPLETED DIRECTORY-----------------------')
-    for file in completed:
-
-        print(f'{bcolors.OKGREEN}{file.name}{bcolors.ENDC}')
-        if not args.dry:
-            shutil.move(parent_dir / file.name, completed_dir / file.name)
-
-        if file.with_suffix('.com').exists():
-            print(f'{bcolors.OKGREEN}{file.with_suffix(".com").name}{bcolors.ENDC}')
-            if not args.dry:
-                shutil.move(parent_dir / file.with_suffix(".com").name, completed_dir / file.with_suffix(".com").name)
-
-        if not args.deletechk:
-            if file.with_suffix('.chk').exists():
-                print(f'{bcolors.OKGREEN}{file.with_suffix(".chk").name}{bcolors.ENDC}')
-                if not args.dry:
-                    shutil.move(parent_dir / file.with_suffix(".chk").name, completed_dir / file.with_suffix(".chk").name)
-
-    print('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
-    for file in failed.keys():
-
-        print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC}')
-        if not args.dry:
-            shutil.move(parent_dir / file.name, failed_dir / file.name)
-
-        if file.with_suffix('.com').exists():
-            print(f'{bcolors.FAIL}{file.with_suffix(".com").name}{bcolors.ENDC}')
-            if not args.dry:
-                shutil.move(parent_dir / file.with_suffix(".com").name, failed_dir / file.with_suffix(".com").name)
-
-        if not args.deletechk:
-            if file.with_suffix('.chk').exists():
-                print(f'{bcolors.FAIL}{file.with_suffix(".chk").name}{bcolors.ENDC}')
-                if not args.dry:
-                    shutil.move(parent_dir / file.with_suffix(".chk").name, failed_dir / file.with_suffix(".chk").name)
-
-    if args.deletechk:
-        print('-------------------------------DELETING CHK FILES-------------------------------')
-        for file in failed.keys():
-            chk_file = file.with_suffix('.chk')
-            if chk_file.exists():
-                print(chk_file.name)
-                chk_file.unlink()
-
-        for file in completed:
-            chk_file = file.with_suffix('.chk')
-            if chk_file.exists():
-                print(chk_file.name)
-                chk_file.unlink()
-
-    if args.debug:
-        print(f'Total time (s): {round(time.time() - t1,2)}')
 
 if __name__ == "__main__":
     args = get_args()
 
-    if args.deletechk:
-        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\n{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}You have selected to delete .chk files. This action is permanent.{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}This feature is experimental and has not been fully tested.{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}Copy your data to a safe location before proceeding.{bcolors.ENDC}')
-        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\t{bcolors.ENDC}')
-        response = input('Proceed (YES/no)?: ')
-
-        if response.casefold() not in ['y', 'yes']:
-            print(f'EXITING')
-            exit()
-
-    main(args)
+    main(args=args)
