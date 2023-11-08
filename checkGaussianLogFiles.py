@@ -195,8 +195,11 @@ def _is_logfile_complete(split_text: list[str]) -> bool:
 
     return False
 
-def get_slurm_out_file(file: Path) -> Path:
+def get_slurm_out_file(file: Path) -> Path | None:
     files = [x for x in file.parent.glob('*out*') if file.stem in x.name]
+
+    if files == []:
+        return None
 
     # Check if only one output file exists
     if len(files) != 1:
@@ -205,7 +208,12 @@ def get_slurm_out_file(file: Path) -> Path:
     return files[0]
 
 def job_preempted(file: Path) -> bool:
-    with open(get_slurm_out_file(file), 'r') as infile:
+    slurm_out = get_slurm_out_file(file)
+
+    if slurm_out is None:
+        return False
+
+    with open(slurm_out, 'r') as infile:
         lines = infile.readlines()
 
     if 'PREEMPTION' in lines[-1]:
