@@ -32,6 +32,10 @@ ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d
 FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
 N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep= \d+')
 
+MAX_FORCE_PATTERN = re.compile(r'Maximum Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
+RMS_FORCE_PATTERN = re.compile(r'RMS     Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
+MAX_DISPLACEMENT_PATTERN = re.compile(r'Maximum Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
+RMS_DISPLACEMENT_PATTERN = re.compile(r'RMS     Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -207,8 +211,20 @@ def get_slurm_out_file(file: Path) -> Path | None:
 
     return files[0]
 
+def get_slurm_error_file(file: Path) -> Path | None:
+    files = [x for x in file.parent.glob('*error*') if file.stem in x.name]
+
+    if files == []:
+        return None
+
+    # Check if only one output file exists
+    if len(files) != 1:
+        print(f'{bcolors.FAIL}WARNING: Multiple SLURM error files identified for {file.name}.{bcolors.ENDC}')
+
+    return files[0]
+
 def job_preempted(file: Path) -> bool:
-    slurm_out = get_slurm_out_file(file)
+    slurm_out = get_slurm_error_file(file)
 
     if slurm_out is None:
         return False
@@ -219,6 +235,46 @@ def job_preempted(file: Path) -> bool:
     if 'PREEMPTION' in lines[-1]:
         return True
     return False
+
+def get_slurm_job_id_from_log_file(text: str) -> int:
+
+    SCRDIR_PATTERN = re.compile(r'(?<=scrdir=\")(.*?)(?=\")', re.DOTALL)
+    match = re.search(SCRDIR_PATTERN, text)
+
+    if match is None:
+        print(f'Could not find slurm job ID!')
+        return None
+
+    match = Path(match[0].strip())
+
+    # Assume the job_id is in the last part of the path
+    match = match.parts[-1]
+
+    try:
+        match = int(''.join([x for x in str(match) if x.isdigit()]))
+    except ValueError as e:
+        pass
+
+def _is_oscillating(values: list[float], window=3) -> float:
+    oscillating_values = set()
+    for i, value in enumerate(values):
+        if i < 2:
+            continue
+
+
+
+def check_oscillating_optimization_criteria(text: str) -> tuple[bool, str]:
+    '''
+    Tests whether an optimization is oscillating
+    '''
+    from pprint import pprint
+    for pattern in [MAX_DISPLACEMENT_PATTERN, RMS_DISPLACEMENT_PATTERN, MAX_FORCE_PATTERN, RMS_FORCE_PATTERN]:
+        matches = re.findall(pattern, text)
+        if len(matches) == 0:
+            continue
+        matches = [float(x.split()[1]) for x in matches]
+
+    exit()
 
 def main(args) -> None:
 
@@ -254,17 +310,28 @@ def main(args) -> None:
 
     for file in files:
 
+        # TODO Getting the job error is difficult based on file names
         # Check if preempted
-        if job_preempted(file):
-            failed[file] = 'was preempted.'
-            continue
+        #if job_preempted(file):
+        #    failed[file] = 'was preempted.'
+        #    continue
 
         # Get the file text
         try:
             text = get_file_text(file)
         except UnicodeDecodeError:
             failed[file] = 'UNICODE DECODE ERROR. CHECK FILE MANUALLY'
+            continue
         split_text = text.split('\n')
+
+        # Attempted code for preemption detection
+        #slurm_job_id = get_slurm_job_id_from_log_file(text=text)
+        #if slurm_job_id is not None:
+        #    slurm_error_file = [x for x in parent_dir.glob('*.error') if str(slurm_job_id) in x.name]
+        #    if slurm_error_file != []:
+        #        if job_preempted(slurm_error_file[0]):
+        #            failed[file] = 'was preempted.'
+        #            continue
 
         if args.debug:
             print_line_by_line_analysis(file, text)
@@ -309,6 +376,11 @@ def main(args) -> None:
         # have completed
         if file not in failed.keys():
             completed.append(file)
+
+        #is_oscillating, oscillations = check_oscillating_optimization_criteria(text)
+
+
+    # Print out the overall analysis
 
     print('------------------------------------OVERVIEW------------------------------------')
     if len(failed) != 0:
