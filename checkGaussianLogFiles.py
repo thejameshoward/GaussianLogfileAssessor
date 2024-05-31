@@ -143,11 +143,11 @@ def get_n_normal_terminations(text: str) -> int:
 def get_n_links(text: str) -> int:
     return len(re.findall(LINK_PATTERN, text))
 
-def has_imaginary_frequency(text: str) -> bool:
+def has_imaginary_frequency(text: str) -> tuple[bool, float]:
     '''
     Determines if log file has imaginary frequencies
     '''
-    return float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0
+    return float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0, float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0])
 
 def has_frequency_section(text: str) -> bool:
     '''
@@ -349,8 +349,9 @@ def main(args) -> None:
         # Check if there is a freq section before
         # parsing the lowest frequency
         if has_frequency_section(text):
-            if has_imaginary_frequency(text):
-                failed[file] = 'has an imaginary frequency'
+            lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
+            if lowest_freq_is_negative:
+                failed[file] = f'has an imaginary frequency at {lowest_freq_value}'
                 continue
 
         # If a specific error can be identified
