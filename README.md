@@ -50,8 +50,10 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
     ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
--  Use multiprocessing to process files much faster (>10x speedup).
-[!NOTE] This will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. Please use responsibly.
+-  Use multiprocessing to process files much faster (>10x speedup).<br>
+
+[!NOTE]
+This will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. Please use responsibly. <br>
 
     ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
