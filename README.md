@@ -38,13 +38,9 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
     ```checkGaussianLogFiles.py -i data/ --line-by-line```
 
-    ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
-
 -  Run the analysis on a single .log file
 
     ```checkGaussianLogFiles.py -i data/james.log --debug --dry```
-
-    ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
 
 -  Delete .chk files that have a corresponding completed .log file (EXPERIMENTAL)
 
