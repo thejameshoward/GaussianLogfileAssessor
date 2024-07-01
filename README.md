@@ -24,33 +24,36 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ## Examples
 
-1.  Run the script on different directory containing your Gaussian 16 log files without moving any files (recommended).
+-  Run the script on different directory containing your Gaussian 16 log files without moving any files (recommended).
 
     ```checkGaussianLogFiles.py -i data/ --dry```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/example.png?raw=true)
 
-2.  Run the same analysis and move files into respective directories.
+-  Run the same analysis and move files into respective directories.
 
     ```checkGaussianLogFiles.py -i data/```
 
-3.  Enable detailed analysis of each file.
+-  Request printout of detailed analysis of each file
 
-    ```checkGaussianLogFiles.py -i data/ --debug```
+    ```checkGaussianLogFiles.py -i data/ --line-by-line```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
 
-4.  Run the analysis on a single log file
+-  Run the analysis on a single .log file
 
     ```checkGaussianLogFiles.py -i data/james.log --debug --dry```
 
     ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
 
-5.  Enable the deletion of .chk files that have a corresponding .log file (EXPERIMENTAL)
+-  Delete .chk files that have a corresponding completed .log file (EXPERIMENTAL)
 
     ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
-    ![example usage](https://github.com/thejameshoward/GaussianLogfileAssessor/blob/master/img/verbose.png?raw=true)
+-  Use multiprocessing to process files much faster (>10x speedup).
+[!NOTE] This will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. Please use responsibly.
+
+    ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
 
 ## CLI Flags
 
@@ -58,6 +61,10 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ```--dry```&nbsp;&nbsp;&nbsp;&nbsp;Disable the creation of new folders and moving files. Useful for inspecting files.
 
-```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Prints detailed file and debug information to the terminal.
+```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Prints extra debug information.
+
+```-p, --parallel```&nbsp;&nbsp;&nbsp;&nbsp;Enables multiprocessing.
+
+```--line-by-line```&nbsp;&nbsp;&nbsp;&nbsp;Prints detailed file and debug information to the terminal.
 
 ```--deletechk```&nbsp;&nbsp;&nbsp;&nbsp;Deletes .chk files of log files for both completed and not completed jobs (EXPERIMENTAL).

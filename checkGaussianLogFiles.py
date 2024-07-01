@@ -456,6 +456,9 @@ def main(args) -> None:
     else:
         parent_dir = Path(args.input)
 
+    if not args.parallel:
+        set_single_proc_affinity()
+
     # Get the logfiles
     files = get_logfiles(parent_dir)
 
