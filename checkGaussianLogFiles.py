@@ -12,15 +12,11 @@ import time
 import math
 import shutil
 import argparse
+import multiprocessing
 
 from pathlib import Path
 
-try:
-    import psutil
-    proc = psutil.Process()
-    proc.cpu_affinity([proc.cpu_affinity()[0]])
-except ModuleNotFoundError:
-    pass
+
 
 DESCRIPTION = '🦝 Analyzes Gaussian 16 log files for common errors 🦝.'
 
@@ -60,9 +56,17 @@ def get_args() -> argparse.Namespace:
                         action='store_true',
                         help='Debug information\n\n')
 
+    parser.add_argument('--line-by-line',
+                        action='store_true',
+                        help='Requests printing of line-by-line analysis of each file\n\n')
+
     parser.add_argument('--dry',
                         action='store_true',
                         help='Disables creation of directories and file movement\n\n')
+
+    parser.add_argument('-p', '--parallel',
+                        action='store_true',
+                        help='Uses multiprocessing to rapidly analyze files.\n\n')
 
     parser.add_argument('--deletechk',
                         action='store_true',
@@ -70,7 +74,22 @@ def get_args() -> argparse.Namespace:
 
     args = parser.parse_args()
 
+    if args.parallel and args.line_by_line:
+        raise NotImplementedError(f'Cannot perform line-by-line analysis in parallel.')
+
     return args
+
+def set_single_proc_affinity():
+    '''
+    Sets the affinity of the script to a single core.
+    '''
+    try:
+        import psutil
+        proc = psutil.Process()
+        proc.cpu_affinity([proc.cpu_affinity()[0]])
+    except ModuleNotFoundError:
+        print(f'[WARNING] psutil module was not found. Running on multiple cores!')
+        pass
 
 def get_file_text(file: Path) -> str:
     '''
@@ -260,8 +279,8 @@ def _is_oscillating(values: list[float], window=3) -> float:
     for i, value in enumerate(values):
         if i < 2:
             continue
-
-
+    raise NotImplementedError
+    return list(oscillating_values)[0]
 
 def check_oscillating_optimization_criteria(text: str) -> tuple[bool, str]:
     '''
@@ -276,17 +295,12 @@ def check_oscillating_optimization_criteria(text: str) -> tuple[bool, str]:
 
     exit()
 
-def main(args) -> None:
-
-    # Note the time
-    t1 = time.time()
-
-    # Input parsing
-    if args.input is None:
-        parent_dir = Path().cwd()
-    else:
-        parent_dir = Path(args.input)
-
+def get_logfiles(parent_dir: Path) -> list[Path]:
+    '''
+    Given a directory (parent_dir), gets all the Gaussian16 logfiles
+    from that directory and returns a list of Path objects for the
+    files.
+    '''
     # Check if its a single file
     if not parent_dir.is_dir():
         if not parent_dir.suffix == '.log':
@@ -298,91 +312,63 @@ def main(args) -> None:
     if len(files) == 0:
         raise FileNotFoundError(f'No log files found in {parent_dir.absolute()}')
 
-    # Sort into failed dicts with files as
-    # keys and reasons as values. Completed
-    # is just a list of Paths
-    failed = {}
-    completed = []
-    print(f'Analyzing {len(files)} files...')
+    return files
 
-    if len(files) >= 200:
-        print(f'This may take a minute.')
+def check_logfile(file: Path) -> tuple[Path, None] | tuple[Path, str]:
+    '''
+    Returns the file Path and the str/None of the error
+    '''
 
-    for file in files:
+    # Get the file text
+    try:
+        text = get_file_text(file)
+    except UnicodeDecodeError:
+        return file, 'UNICODE DECODE ERROR. CHECK FILE MANUALLY'
 
-        # TODO Getting the job error is difficult based on file names
-        # Check if preempted
-        #if job_preempted(file):
-        #    failed[file] = 'was preempted.'
-        #    continue
+    split_text = text.split('\n')
 
-        # Get the file text
+    # TODO this line is essentially ignored if a "failure" is detected by later logic
+    #if not _is_logfile_complete(split_text):
+    #    return file, 'is not a complete logfile. Is the job running?'
+
+    # Get the lines at which jobs start
+    # and normal termination lines appear
+    job_lines = get_job_start_line_numbers(text)
+    term_lines = get_termination_line_numbers(text)
+    error_lines = get_job_error_line_numbers(text)
+
+    # Check if there is a freq section before
+    # parsing the lowest frequency
+    if has_frequency_section(text):
+        lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
+        if lowest_freq_is_negative:
+            return file, f'has an imaginary frequency at {round(lowest_freq_value, 4)}'
+
+    # If a specific error can be identified
+    # use the text of the line as the "reason"
+    if len(error_lines) != 0:
+        return file, '\t'.join([split_text[i].strip() + f' (line {i})' for i in error_lines])
+
+    # Iterate over the lines that indicate a job started
+    for i, job_start in enumerate(job_lines):
+
+        # Check if a termination line proceeded the job start line
         try:
-            text = get_file_text(file)
-        except UnicodeDecodeError:
-            failed[file] = 'UNICODE DECODE ERROR. CHECK FILE MANUALLY'
-            continue
-        split_text = text.split('\n')
+            if job_start > term_lines[i]:
+                return file, f'job on line {job_start + 1} failed.'
+        except IndexError:
+            return file, f'job on line {job_start + 1} failed.'
 
-        # Attempted code for preemption detection
-        #slurm_job_id = get_slurm_job_id_from_log_file(text=text)
-        #if slurm_job_id is not None:
-        #    slurm_error_file = [x for x in parent_dir.glob('*.error') if str(slurm_job_id) in x.name]
-        #    if slurm_error_file != []:
-        #        if job_preempted(slurm_error_file[0]):
-        #            failed[file] = 'was preempted.'
-        #            continue
+    #TODO
+    #is_oscillating, oscillations = check_oscillating_optimization_criteria(text)
 
-        if args.debug:
-            print_line_by_line_analysis(file, text)
+    return file, None
 
-        # TODO this line is essentially ignored if a "failure" is detected by later logic
-        if not _is_logfile_complete(split_text):
-            failed[file] = 'is not a complete logfile. Is the job running?'
-
-        # Get the lines at which jobs start
-        # and normal termination lines appear
-        job_lines = get_job_start_line_numbers(text)
-        term_lines = get_termination_line_numbers(text)
-        error_lines = get_job_error_line_numbers(text)
-
-        # Check if there is a freq section before
-        # parsing the lowest frequency
-        if has_frequency_section(text):
-            lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
-            if lowest_freq_is_negative:
-                failed[file] = f'has an imaginary frequency at {lowest_freq_value}'
-                continue
-
-        # If a specific error can be identified
-        # use the text of the line as the "reason"
-        if len(error_lines) != 0:
-            for i in error_lines:
-                failed[file] = split_text[i].strip() + f' (line {i})'
-                break
-            continue
-
-        # Iterate over the lines that indicate a job started
-        for i, job_start in enumerate(job_lines):
-
-            # Check if a termination line proceeded the job start line
-            try:
-                if job_start > term_lines[i]:
-                    failed[file] = f'job on line {job_start+1} failed.'
-            except IndexError:
-                failed[file] = f'job on line {job_start+1} failed.'
-
-        # Check if the logic above put the file
-        # in the failed dict. If it didnt, it must
-        # have completed
-        if file not in failed.keys():
-            completed.append(file)
-
-        #is_oscillating, oscillations = check_oscillating_optimization_criteria(text)
-
-
-    # Print out the overall analysis
-
+def print_analysis_and_move_files(failed: dict,
+                                  completed: list[Path],
+                                  files: list[Path],
+                                  parent_dir: Path,
+                                  delete_chk: bool = False):
     print('------------------------------------OVERVIEW------------------------------------')
     if len(failed) != 0:
         for file, reason in failed.items():
@@ -439,7 +425,7 @@ def main(args) -> None:
                 if not args.dry:
                     shutil.move(parent_dir / file.with_suffix(".chk").name, failed_dir / file.with_suffix(".chk").name)
 
-    if args.deletechk:
+    if delete_chk:
         print('-------------------------------DELETING CHK FILES-------------------------------')
         for file in failed.keys():
             chk_file = file.with_suffix('.chk')
@@ -452,6 +438,63 @@ def main(args) -> None:
             if chk_file.exists():
                 print(chk_file.name)
                 chk_file.unlink()
+
+    print('\n')
+    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
+    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
+    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
+    print('\n')
+
+def main(args) -> None:
+
+    # Note the time
+    t1 = time.time()
+
+    # Input parsing
+    if args.input is None:
+        parent_dir = Path().cwd()
+    else:
+        parent_dir = Path(args.input)
+
+    # Get the logfiles
+    files = get_logfiles(parent_dir)
+
+    # Sort into failed dicts with files as keys and reasons as values.
+    # Completed is just a list of Paths
+    failed = {}
+    completed = []
+    print(f'Analyzing {len(files)} files...')
+
+    if len(files) >= 200:
+        print(f'This may take a minute.')
+
+    # Iterate through the files
+    if args.parallel:
+        with multiprocessing.Pool() as p:
+            results = p.map(check_logfile, files)
+            completed = [x[0] for x in results if x[1] is None]
+            failed = {x[0]:x[1] for x in results if x[1] is not None}
+    else:
+        for file in files:
+
+            file, logfile_assessment = check_logfile(file)
+
+            if args.line_by_line:
+                print_line_by_line_analysis(file, text)
+
+            if logfile_assessment is None and file not in failed.keys():
+                completed.append(file)
+            else:
+                failed[file] = logfile_assessment
+
+
+    # Print out the overall analysis
+    print_analysis_and_move_files(failed,
+                                  completed=completed,
+                                  files=files,
+                                  parent_dir=parent_dir,
+                                  delete_chk = bool(args.deletechk))
+
 
     if args.debug:
         print(f'Total time (s): {round(time.time() - t1,2)}')
