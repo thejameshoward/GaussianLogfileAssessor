@@ -17,7 +17,6 @@ import multiprocessing
 from pathlib import Path
 
 
-
 DESCRIPTION = '🦝 Analyzes Gaussian 16 log files for common errors 🦝.'
 
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
@@ -328,26 +327,42 @@ def get_logfiles(parent_dir: Path) -> list[Path]:
 
     return files
 
-def check_logfile(file: Path) -> tuple[Path, None] | tuple[Path, str]:
+def check_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
     '''
-    Returns the file Path and the str/None of the error
-    '''
+    Prints a colorful analysis of only the failed files including
+    a reason. Also prints a summary of all files (total number completed
+    or failed).
 
-    # Get the file text
+    Parameters
+    ----------
+    failed: dict
+        Dictionary of Path:reason pairs where reason is a string
+        containing an explanation of what went wrong.
+
+    completed: list[Path]
+        List of completed G16 .log files as pathlib.Path objects
+
+    files: list[Path]
+        List of all G16 .log files
+
+    Returns
+    ----------
+    None
+    '''
     try:
         text = get_file_text(file)
     except UnicodeDecodeError:
-        return file, 'UNICODE DECODE ERROR. CHECK FILE MANUALLY'
+        return file, 'UNICODE DECODE ERROR. CHECK FILE MANUALLY', None
 
     split_text = text.split('\n')
 
     # Check for PREEMPTION
     if job_preempted(file):
-        return file, 'was PREEMPTED'
+        return file, 'was PREEMPTED', text
 
     # Check for CANCELLED
     if job_cancelled(file):
-        return file, 'was CANCELLED by user'
+        return file, 'was CANCELLED by user', text
 
     # TODO this line is essentially ignored if a "failure" is detected by later logic
     #if not _is_logfile_complete(split_text):
@@ -364,12 +379,12 @@ def check_logfile(file: Path) -> tuple[Path, None] | tuple[Path, str]:
     if has_frequency_section(text):
         lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
         if lowest_freq_is_negative:
-            return file, f'has an imaginary frequency at {round(lowest_freq_value, 4)}'
+            return file, f'has an imaginary frequency at {round(lowest_freq_value, 4)}', text
 
     # If a specific error can be identified
     # use the text of the line as the "reason"
     if len(error_lines) != 0:
-        return file, '\t'.join([split_text[i].strip() + f' (line {i})' for i in error_lines])
+        return file, '\t'.join([split_text[i].strip() + f' (line {i})' for i in error_lines]), text
 
     # Iterate over the lines that indicate a job started
     for i, job_start in enumerate(job_lines):
@@ -377,20 +392,45 @@ def check_logfile(file: Path) -> tuple[Path, None] | tuple[Path, str]:
         # Check if a termination line proceeded the job start line
         try:
             if job_start > term_lines[i]:
-                return file, f'job on line {job_start + 1} failed.'
+                return file, f'job on line {job_start + 1} failed.', text
         except IndexError:
-            return file, f'job on line {job_start + 1} failed.'
+            return file, f'job on line {job_start + 1} failed.', text
 
     #TODO
     #is_oscillating, oscillations = check_oscillating_optimization_criteria(text)
 
-    return file, None
+    return file, None, text
 
 def print_analysis_and_move_files(failed: dict,
                                   completed: list[Path],
                                   files: list[Path],
                                   parent_dir: Path,
-                                  delete_chk: bool = False):
+                                  delete_chk: bool = False) -> None:
+    '''
+    Prints a colorful analysis of the processed G16 log files.
+
+    Parameters
+    ----------
+    failed: dict
+        Dictionary of Path:reason pairs where reason is a string
+        containing an explanation of what went wrong.
+
+    completed: list[Path]
+        List of completed G16 .log files as pathlib.Path objects
+
+    files: list[Path]
+        List of all G16 .log files
+
+    parent_dir: Path
+        Directory on which the script operated
+
+    delete_chk: bool
+        Whether to delete .chk files instead of moving them
+
+    Returns
+    ----------
+    None
+    '''
     if not args.dry:
         # Make the new folders
         completed_dir = parent_dir / 'completed'
@@ -459,6 +499,27 @@ def print_analysis_and_move_files(failed: dict,
 def print_summary(failed: dict,
                   completed: list[Path],
                   files: list[Path]):
+    '''
+    Prints a colorful analysis of only the failed files including
+    a reason. Also prints a summary of all files (total number completed
+    or failed).
+
+    Parameters
+    ----------
+    failed: dict
+        Dictionary of Path:reason pairs where reason is a string
+        containing an explanation of what went wrong.
+
+    completed: list[Path]
+        List of completed G16 .log files as pathlib.Path objects
+
+    files: list[Path]
+        List of all G16 .log files
+
+    Returns
+    ----------
+    None
+    '''
     print('------------------------------------OVERVIEW------------------------------------')
     if len(failed) != 0:
         for file, reason in failed.items():
@@ -471,7 +532,9 @@ def print_summary(failed: dict,
     print('\n')
 
 def main(args) -> None:
-
+    '''
+    Main function for running the script.
+    '''
     # Note the time
     t1 = time.time()
 
@@ -505,10 +568,10 @@ def main(args) -> None:
     else:
         for file in files:
 
-            file, logfile_assessment = check_logfile(file)
+            file, logfile_assessment, file_text = check_logfile(file)
 
             if args.line_by_line:
-                print_line_by_line_analysis(file, text)
+                print_line_by_line_analysis(file, file_text)
 
             if logfile_assessment is None and file not in failed.keys():
                 completed.append(file)
