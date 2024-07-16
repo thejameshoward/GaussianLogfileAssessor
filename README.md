@@ -1,5 +1,5 @@
 # GaussianLogfileAssessor
-This script provides analyzes and reports information about Gaussian 16 .log files including whether or not all planned calculations (or internal Gaussian jobs) terminated successfully. By default, the script moves the completed and failed .log, .com, and .chk files to their respective `failed` and `completed` directories.
+This script provides analyzes and reports information about Gaussian 16 (G16) .log files including whether or not all planned calculations (or internal Gaussian jobs) terminated successfully. By default, the script moves the completed and failed .log, .com, and .chk files to their respective `failed` and `completed` directories.
 <br>
 <br>
 
@@ -24,7 +24,7 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ## Examples
 
--  Run the script on different directory containing your Gaussian 16 log files without moving any files using the `--dry` flag (recommended).
+-  Run the script on different directory containing your G16 log files without moving any files using the `--dry` flag (recommended).
 
     ```checkGaussianLogFiles.py -i data/ --dry```
 
