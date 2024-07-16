@@ -231,14 +231,15 @@ def get_slurm_out_file(file: Path) -> Path | None:
     return files[0]
 
 def get_slurm_error_file(file: Path) -> Path | None:
+    '''
+    Finds an error file that contains the file stem.
+    Returns None if exactly 1 file was not found.
+    '''
     files = [x for x in file.parent.glob('*error*') if file.stem in x.name]
 
-    if files == []:
-        return None
-
-    # Check if only one output file exists
+    # Return None if there is not exactly 1 file
     if len(files) != 1:
-        print(f'{bcolors.FAIL}WARNING: Multiple SLURM error files identified for {file.name}.{bcolors.ENDC}')
+        return None
 
     return files[0]
 
@@ -252,6 +253,19 @@ def job_preempted(file: Path) -> bool:
         lines = infile.readlines()
 
     if 'PREEMPTION' in lines[-1]:
+        return True
+    return False
+
+def job_cancelled(file: Path) -> bool:
+    slurm_out = get_slurm_error_file(file)
+
+    if slurm_out is None:
+        return False
+
+    with open(slurm_out, 'r') as infile:
+        lines = infile.readlines()
+
+    if 'CANCELLED' in lines[-1]:
         return True
     return False
 
@@ -327,6 +341,14 @@ def check_logfile(file: Path) -> tuple[Path, None] | tuple[Path, str]:
 
     split_text = text.split('\n')
 
+    # Check for PREEMPTION
+    if job_preempted(file):
+        return file, 'was PREEMPTED'
+
+    # Check for CANCELLED
+    if job_cancelled(file):
+        return file, 'was CANCELLED by user'
+
     # TODO this line is essentially ignored if a "failure" is detected by later logic
     #if not _is_logfile_complete(split_text):
     #    return file, 'is not a complete logfile. Is the job running?'
@@ -369,17 +391,6 @@ def print_analysis_and_move_files(failed: dict,
                                   files: list[Path],
                                   parent_dir: Path,
                                   delete_chk: bool = False):
-    print('------------------------------------OVERVIEW------------------------------------')
-    if len(failed) != 0:
-        for file, reason in failed.items():
-            print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC} failed because {reason}')
-
-    print('\n')
-    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
-    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
-    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
-    print('\n')
-
     if not args.dry:
         # Make the new folders
         completed_dir = parent_dir / 'completed'
@@ -445,6 +456,20 @@ def print_analysis_and_move_files(failed: dict,
     print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
     print('\n')
 
+def print_summary(failed: dict,
+                  completed: list[Path],
+                  files: list[Path]):
+    print('------------------------------------OVERVIEW------------------------------------')
+    if len(failed) != 0:
+        for file, reason in failed.items():
+            print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC} failed because {reason}')
+
+    print('\n')
+    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
+    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
+    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
+    print('\n')
+
 def main(args) -> None:
 
     # Note the time
@@ -490,13 +515,17 @@ def main(args) -> None:
             else:
                 failed[file] = logfile_assessment
 
+    print_summary(failed,
+                  completed=completed,
+                  files=files)
 
     # Print out the overall analysis
-    print_analysis_and_move_files(failed,
-                                  completed=completed,
-                                  files=files,
-                                  parent_dir=parent_dir,
-                                  delete_chk = bool(args.deletechk))
+    if not args.dry:
+        print_analysis_and_move_files(failed,
+                                    completed=completed,
+                                    files=files,
+                                    parent_dir=parent_dir,
+                                    delete_chk = bool(args.deletechk))
 
 
     if args.debug:
