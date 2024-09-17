@@ -327,6 +327,12 @@ def get_logfiles(parent_dir: Path) -> list[Path]:
 
     return files
 
+def has_atomic_number_out_of_basis_set(split_text: list[str]) -> tuple[bool, str] | tuple[bool, None]:
+    lines = [x for x in split_text if 'Atomic number out of range for' in x]
+    if len(lines) != 0:
+        return True, lines[0].strip()
+    return False, None
+
 def check_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
     '''
     Prints a colorful analysis of only the failed files including
@@ -373,6 +379,10 @@ def check_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] 
     job_lines = get_job_start_line_numbers(text)
     term_lines = get_termination_line_numbers(text)
     error_lines = get_job_error_line_numbers(text)
+
+    atomic_number_out_of_range, out_of_range_line = has_atomic_number_out_of_basis_set(split_text=split_text)
+    if atomic_number_out_of_range:
+        return file, f'failed because {out_of_range_line}', text
 
     # Check if there is a freq section before
     # parsing the lowest frequency
@@ -590,9 +600,7 @@ def main(args) -> None:
                                     parent_dir=parent_dir,
                                     delete_chk = bool(args.deletechk))
 
-
-    if args.debug:
-        print(f'Total time (s): {round(time.time() - t1,2)}')
+    print(f'Total time (s): {round(time.time() - t1,2)}')
 
 if __name__ == "__main__":
     args = get_args()

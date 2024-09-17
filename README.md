@@ -57,11 +57,11 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
 ```-i, --input```&nbsp;&nbsp;&nbsp;&nbsp;The directory to be analyzed. The default is current working directory.
 
+```-p, --parallel```&nbsp;&nbsp;&nbsp;&nbsp;Enables multiprocessing.
+
 ```--dry```&nbsp;&nbsp;&nbsp;&nbsp;Disable the creation of new folders and moving files. Useful for inspecting files.
 
 ```--debug```&nbsp;&nbsp;&nbsp;&nbsp;Prints extra debug information.
-
-```-p, --parallel```&nbsp;&nbsp;&nbsp;&nbsp;Enables multiprocessing.
 
 ```--line-by-line```&nbsp;&nbsp;&nbsp;&nbsp;Prints detailed file and debug information to the terminal.
 
