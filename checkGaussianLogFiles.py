@@ -31,6 +31,7 @@ MAX_FORCE_PATTERN = re.compile(r'Maximum Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES
 RMS_FORCE_PATTERN = re.compile(r'RMS     Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
 MAX_DISPLACEMENT_PATTERN = re.compile(r'Maximum Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
 RMS_DISPLACEMENT_PATTERN = re.compile(r'RMS     Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -80,7 +81,19 @@ def get_args() -> argparse.Namespace:
 
 def set_single_proc_affinity():
     '''
-    Sets the affinity of the script to a single core.
+    Restricts the CPU affinity of the current process to a single core.
+
+    Limits script execution to the first available core, ensuring
+    that the script runs on a single processor. If the `psutil` module is
+    not installed, a warning is printed, and no restriction is applied.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    ----------
+    None
     '''
     try:
         import psutil
@@ -92,16 +105,45 @@ def set_single_proc_affinity():
 
 def get_file_text(file: Path) -> str:
     '''
-    Gets the raw text from the file.
+    Reads the entire contents of a text file and returns it as a string.
+
+    Parameters
+    ----------
+    file : Path
+        Path to the file to be read.
+
+    Returns
+    ----------
+    str
+        The raw text content of the file.
+
+    Raises
+    ----------
+    FileNotFoundError
+        If the specified file does not exist.
+
+    UnicodeDecodeError
+        If the file cannot be decoded using UTF-8.
     '''
-    with open(file, 'r') as infile:
+    with open(file, 'r', encoding='utf-8') as infile:
         return infile.read()
 
 def get_job_start_line_numbers(text: str) -> list[int]:
     '''
-    Gets the line numbers that indicate a new link
-    or an internal job. Successful calculations should
-    have a "Normal termination" line after each of these.
+    Identifies line numbers in a Gaussian log file where a new
+    computational job or link step begins.
+
+    Parameters
+    ----------
+    text : str
+        The complete text of the Gaussian log file.
+
+    Returns
+    ----------
+    list[int]
+        A list of line numbers where new job steps or internal links
+        are initiated. Each of these lines should be followed by a
+        "Normal termination" line in a successfully completed calculation.
     '''
     lines = text.split('\n')
 
@@ -113,8 +155,6 @@ def get_job_start_line_numbers(text: str) -> list[int]:
             termination_indicator_lines.append(i)
         elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
             termination_indicator_lines.append(i)
-        else:
-            pass
 
     return termination_indicator_lines
 
@@ -165,7 +205,7 @@ def has_imaginary_frequency(text: str) -> tuple[bool, float]:
     '''
     Determines if log file has imaginary frequencies
     '''
-    return float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0, float(re.split('\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0])
+    return float(re.split(r'\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0, float(re.split(r'\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0])
 
 def has_frequency_section(text: str) -> bool:
     '''
@@ -333,27 +373,27 @@ def has_atomic_number_out_of_basis_set(split_text: list[str]) -> tuple[bool, str
         return True, lines[0].strip()
     return False, None
 
-def check_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
+def evaluate_g16_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
     '''
-    Prints a colorful analysis of only the failed files including
-    a reason. Also prints a summary of all files (total number completed
-    or failed).
+    Evaluates a Gaussian16 log file to determine whether it completed successfully,
+    encountered an error, or terminated abnormally.
 
     Parameters
     ----------
-    failed: dict
-        Dictionary of Path:reason pairs where reason is a string
-        containing an explanation of what went wrong.
-
-    completed: list[Path]
-        List of completed G16 .log files as pathlib.Path objects
-
-    files: list[Path]
-        List of all G16 .log files
+    file : Path
+        Path to the Gaussian16 .log file to be analyzed.
 
     Returns
     ----------
-    None
+    tuple[Path, None, str]
+        If the logfile completed successfully, returns the file path and its text.
+
+    tuple[Path, str, str]
+        If the logfile encountered an error, returns the file path, an error message,
+        and the file text.
+
+    tuple[Path, None, None]
+        If the logfile is incomplete or running, returns the file path and None values.
     '''
     try:
         text = get_file_text(file)
@@ -567,21 +607,24 @@ def main(args) -> None:
     print(f'Analyzing {len(files)} files...')
 
     if len(files) >= 200:
-        print(f'This may take a minute.')
+        print('This may take a minute.')
 
     # Iterate through the files
     if args.parallel:
         with multiprocessing.Pool() as p:
-            results = p.map(check_logfile, files)
+            results = p.map(evaluate_g16_logfile, files)
             completed = [x[0] for x in results if x[1] is None]
-            failed = {x[0]:x[1] for x in results if x[1] is not None}
+            failed = {x[0]: x[1] for x in results if x[1] is not None}
     else:
         for file in files:
 
-            file, logfile_assessment, file_text = check_logfile(file)
+            file, logfile_assessment, file_text = evaluate_g16_logfile(file)
 
             if args.line_by_line:
-                print_line_by_line_analysis(file, file_text)
+                if file_text is None:
+                    print(f'Could not perform line-by-line analysis because {logfile_assessment}')
+                else:
+                    print_line_by_line_analysis(file, file_text)
 
             if logfile_assessment is None and file not in failed.keys():
                 completed.append(file)
@@ -595,12 +638,12 @@ def main(args) -> None:
     # Print out the overall analysis
     if not args.dry:
         print_analysis_and_move_files(failed,
-                                    completed=completed,
-                                    files=files,
-                                    parent_dir=parent_dir,
-                                    delete_chk = bool(args.deletechk))
+                                      completed=completed,
+                                      files=files,
+                                      parent_dir=parent_dir,
+                                      delete_chk = bool(args.deletechk))
 
-    print(f'Total time (s): {round(time.time() - t1,2)}')
+    print(f'Total analysis time (s): {round(time.time() - t1,2)}')
 
 if __name__ == "__main__":
     args = get_args()
@@ -614,7 +657,7 @@ if __name__ == "__main__":
         response = input('Proceed (YES/no)?: ')
 
         if response.casefold() not in ['y', 'yes']:
-            print(f'EXITING')
+            print(f'Response was {response.casefold}. Exiting gracefully.')
             exit()
 
     main(args)

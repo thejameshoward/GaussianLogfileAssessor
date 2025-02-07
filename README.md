@@ -1,5 +1,5 @@
 # GaussianLogfileAssessor
-This script provides analyzes and reports information about Gaussian 16 (G16) .log files including whether or not all planned calculations (or internal Gaussian jobs) terminated successfully. By default, the script moves the completed and failed .log, .com, and .chk files to their respective `failed` and `completed` directories.
+This script analyzes and reports information about Gaussian 16 (G16) .log files including whether or not all planned calculations (or internal Gaussian jobs) terminated successfully. By default, the script moves the completed and failed .log, .com, and .chk files to their respective `failed` and `completed` directories.
 <br>
 <br>
 
