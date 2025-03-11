@@ -12,10 +12,11 @@ import time
 import math
 import shutil
 import argparse
+import itertools
 import multiprocessing
 
 from pathlib import Path
-
+from typing import Iterable
 
 DESCRIPTION = '🦝 Analyzes Gaussian 16 log files for common errors 🦝.'
 
@@ -23,14 +24,15 @@ LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
 NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
 PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job step number\s+', re.DOTALL)
 FILEIO_ERROR_NON_EXISTENT_FILE = re.compile(r'\s+FileIO operation on non-existent file', re.DOTALL)
+ILLEGAL_MULTIPLICITY = re.compile(r'The combination of multiplicity\s+\d+\s+and\s+\d+\s+electrons is impossible', re.DOTALL)
 ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
 FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
 N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep= \d+')
 
-MAX_FORCE_PATTERN = re.compile(r'Maximum Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
-RMS_FORCE_PATTERN = re.compile(r'RMS     Force\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
-MAX_DISPLACEMENT_PATTERN = re.compile(r'Maximum Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
-RMS_DISPLACEMENT_PATTERN = re.compile(r'RMS     Displacement\s+\d+\.\d+\s+\d+\.\d+\s+(?:NO|YES)')
+MAX_FORCE_PATTERN = re.compile(r'(?<=Maximum Force)(.*?)(?=(?:NO|YES))')
+RMS_FORCE_PATTERN = re.compile(r'(?<=RMS     Force)(.*?)(?=(?:NO|YES))')
+MAX_DISPLACEMENT_PATTERN = re.compile(r'(?<=Maximum Displacement)(.*?)(?=(?:NO|YES))')
+RMS_DISPLACEMENT_PATTERN = re.compile(r'(?<=RMS     Displacement)(.*?)(?=(?:NO|YES))')
 
 class bcolors:
     HEADER = '\033[95m'
@@ -72,10 +74,31 @@ def get_args() -> argparse.Namespace:
                         action='store_true',
                         help='Deletes ALL large .chk files that have a corresponding log instead of moving them.\n\n')
 
+    parser.add_argument('-t', '--tolerance',
+                        dest='tolerance',
+                        required=False,
+                        type=float,
+                        default='1e-4',
+                        help='Sets the tolerance value for determining oscillating optimizations.\n\n')
+
+    parser.add_argument('-w', '--window',
+                        dest='window',
+                        required=False,
+                        type=int,
+                        default=10,
+                        help='Number of optimization steps to look at when evaluating oscillations.\n\n')
+
+    parser.add_argument('--no-oscillation-criteria',
+                        action='store_false',
+                        help='Disables detection of oscillations to increase assessment speed. Oscillations appear as ambiguous failed jobs.\n\n')
+
     args = parser.parse_args()
 
+    if args.no_oscillation_criteria is None:
+        args.no_oscillation_criteria = True
+
     if args.parallel and args.line_by_line:
-        raise NotImplementedError(f'Cannot perform line-by-line analysis in parallel.')
+        raise NotImplementedError('Cannot perform line-by-line analysis in parallel.')
 
     return args
 
@@ -327,27 +350,6 @@ def get_slurm_job_id_from_log_file(text: str) -> int:
     except ValueError as e:
         pass
 
-def _is_oscillating(values: list[float], window=3) -> float:
-    oscillating_values = set()
-    for i, value in enumerate(values):
-        if i < 2:
-            continue
-    raise NotImplementedError
-    return list(oscillating_values)[0]
-
-def check_oscillating_optimization_criteria(text: str) -> tuple[bool, str]:
-    '''
-    Tests whether an optimization is oscillating
-    '''
-    from pprint import pprint
-    for pattern in [MAX_DISPLACEMENT_PATTERN, RMS_DISPLACEMENT_PATTERN, MAX_FORCE_PATTERN, RMS_FORCE_PATTERN]:
-        matches = re.findall(pattern, text)
-        if len(matches) == 0:
-            continue
-        matches = [float(x.split()[1]) for x in matches]
-
-    exit()
-
 def get_logfiles(parent_dir: Path) -> list[Path]:
     '''
     Given a directory (parent_dir), gets all the Gaussian16 logfiles
@@ -373,13 +375,111 @@ def has_atomic_number_out_of_basis_set(split_text: list[str]) -> tuple[bool, str
         return True, lines[0].strip()
     return False, None
 
-def evaluate_g16_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
+def has_illegal_multiplicity(text: str) -> tuple[bool, str] | tuple[bool, None]:
+    '''
+    '''
+    match = re.search(ILLEGAL_MULTIPLICITY, text)  # Use search instead of match
+    if match:
+        return True, re.sub(r'\s+', ' ', match.group(0))
+    return False, None
+
+def get_optimization_data(text: str) -> tuple[list[float], list[float], list[float], list[float]]:
+    '''
+    Extracts Maximum Force, RMS Force, Maximum Displacement, and RMS Displacement
+    from a Gaussian log file.
+
+    Parameters
+    ----------
+    text: str
+        Raw text of Gaussian16 log file
+
+    Returns
+    ----------
+    tuple[list[float], list[float], list[float], list[float]]
+        A list of optimization step data, where each entry is a list of four floats:
+        [Maximum Force, RMS Force, Maximum Displacement, RMS Displacement].
+
+    Notes
+    ----------
+    - Uses `re.findall` with lookbehind assertions to efficiently extract optimization criteria.
+    - Matches all occurrences throughout the file.
+    '''
+
+    max_force_matches = re.findall(MAX_FORCE_PATTERN, text)
+    rms_force_matches = re.findall(RMS_FORCE_PATTERN, text)
+    max_displacement_matches = re.findall(MAX_DISPLACEMENT_PATTERN, text)
+    rms_displacement_matches = re.findall(RMS_DISPLACEMENT_PATTERN, text)
+
+    max_force_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  max_force_matches]
+    rms_force_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  rms_force_matches]
+    max_displacement_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  max_displacement_matches]
+    rms_displacement_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  rms_displacement_matches]
+
+    return max_force_matches, rms_force_matches, max_displacement_matches, rms_displacement_matches
+
+def detect_alternation(series: Iterable[float],
+                       window: int = 10,
+                       tolerance: float = 1e-4) -> tuple[bool, set]:
+    '''
+    Detects if values in the last `window` steps alternate between two or more values.
+    '''
+    if len(series) < window:
+        return False, None  # Not enough data
+
+    recent = series[-window:]  # Focus on last `window` steps
+    diffs = [abs(recent[i] - recent[i - 1]) for i in range(1, len(recent))]
+
+    alternating = all(abs(diffs[i] - diffs[i - 1]) < tolerance for i in range(1, len(diffs)))
+
+    return alternating, set(recent)
+
+def check_oscillating_optimization_criteria(text: str,
+                                            window: int = 10,
+                                            tolerance: float = 1e-4) -> tuple[bool, str | None]:
+    '''
+    Tests whether an optimization is oscillating
+    '''
+    # Get the match criteria
+    max_force, rms_force, max_displacement, rms_displacement = get_optimization_data(text=text)
+
+    if not max_force:
+        return False, 'no optimization data for max force'
+    if not rms_force:
+        return False, 'no optimization data for rms force'
+    if not max_displacement:
+        return False, 'no optimization data for max displacement'
+    if not rms_displacement:
+        return False, 'no optimization data for rms displacement'
+
+    # Check each series for oscillation
+    is_oscillating, recent = detect_alternation(max_force, window=window, tolerance=tolerance)
+    if is_oscillating:
+        return is_oscillating, f'MAX FORCE is oscillating between {recent}'
+
+    is_oscillating, recent = detect_alternation(rms_force, window=window, tolerance=tolerance)
+    if is_oscillating:
+        return is_oscillating, f'RMS FORCE is oscillating between {recent}'
+
+    is_oscillating, recent = detect_alternation(max_displacement, window=window, tolerance=tolerance)
+    if is_oscillating:
+        return is_oscillating, f'MAX DISPLACEMENT is oscillating between {recent}'
+
+    is_oscillating, recent = detect_alternation(max_force, window=window, tolerance=tolerance)
+    if is_oscillating:
+        return is_oscillating, f'RMS DISPLACEMENT is oscillating between {recent}'
+
+    return False, None
+
+def evaluate_g16_logfile(file: Path,
+                         window: int,
+                         tolerance: float,
+                         check_oscillation: bool = True) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
     '''
     Evaluates a Gaussian16 log file to determine whether it completed successfully,
     encountered an error, or terminated abnormally.
 
     Parameters
-    ----------
+    ----------show
     file : Path
         Path to the Gaussian16 .log file to be analyzed.
 
@@ -424,12 +524,25 @@ def evaluate_g16_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str
     if atomic_number_out_of_range:
         return file, f'failed because {out_of_range_line}', text
 
+    illegal_mult, illegal_mult_line = has_illegal_multiplicity(text=text)
+    if illegal_mult:
+        return file, f'{illegal_mult_line}', text
+
     # Check if there is a freq section before
     # parsing the lowest frequency
     if has_frequency_section(text):
         lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
         if lowest_freq_is_negative:
             return file, f'has an imaginary frequency at {round(lowest_freq_value, 4)}', text
+
+    # Check for oscillation
+    if check_oscillation:
+        is_oscillating, oscillation_reason = check_oscillating_optimization_criteria(text,
+                                                                                    window=window,
+                                                                                    tolerance=tolerance)
+
+        if is_oscillating:
+            return file, oscillation_reason, text
 
     # If a specific error can be identified
     # use the text of the line as the "reason"
@@ -446,16 +559,14 @@ def evaluate_g16_logfile(file: Path) -> tuple[Path, None, str] | tuple[Path, str
         except IndexError:
             return file, f'job on line {job_start + 1} failed.', text
 
-    #TODO
-    #is_oscillating, oscillations = check_oscillating_optimization_criteria(text)
-
     return file, None, text
 
 def print_analysis_and_move_files(failed: dict,
                                   completed: list[Path],
                                   files: list[Path],
                                   parent_dir: Path,
-                                  delete_chk: bool = False) -> None:
+                                  delete_chk: bool = False,
+                                  dry: bool = False) -> None:
     '''
     Prints a colorful analysis of the processed G16 log files.
 
@@ -477,11 +588,14 @@ def print_analysis_and_move_files(failed: dict,
     delete_chk: bool
         Whether to delete .chk files instead of moving them
 
+    dry: bool
+        Whether files are moved or not
+
     Returns
     ----------
     None
     '''
-    if not args.dry:
+    if not dry:
         # Make the new folders
         completed_dir = parent_dir / 'completed'
         if not completed_dir.exists():
@@ -494,36 +608,36 @@ def print_analysis_and_move_files(failed: dict,
     for file in completed:
 
         print(f'{bcolors.OKGREEN}{file.name}{bcolors.ENDC}')
-        if not args.dry:
+        if not dry:
             shutil.move(parent_dir / file.name, completed_dir / file.name)
 
         if file.with_suffix('.com').exists():
             print(f'{bcolors.OKGREEN}{file.with_suffix(".com").name}{bcolors.ENDC}')
-            if not args.dry:
+            if not dry:
                 shutil.move(parent_dir / file.with_suffix(".com").name, completed_dir / file.with_suffix(".com").name)
 
-        if not args.deletechk:
+        if not delete_chk:
             if file.with_suffix('.chk').exists():
                 print(f'{bcolors.OKGREEN}{file.with_suffix(".chk").name}{bcolors.ENDC}')
-                if not args.dry:
+                if not dry:
                     shutil.move(parent_dir / file.with_suffix(".chk").name, completed_dir / file.with_suffix(".chk").name)
 
     print('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
     for file in failed.keys():
 
         print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC}')
-        if not args.dry:
+        if not dry:
             shutil.move(parent_dir / file.name, failed_dir / file.name)
 
         if file.with_suffix('.com').exists():
             print(f'{bcolors.FAIL}{file.with_suffix(".com").name}{bcolors.ENDC}')
-            if not args.dry:
+            if not dry:
                 shutil.move(parent_dir / file.with_suffix(".com").name, failed_dir / file.with_suffix(".com").name)
 
-        if not args.deletechk:
+        if not delete_chk:
             if file.with_suffix('.chk').exists():
                 print(f'{bcolors.FAIL}{file.with_suffix(".chk").name}{bcolors.ENDC}')
-                if not args.dry:
+                if not dry:
                     shutil.move(parent_dir / file.with_suffix(".chk").name, failed_dir / file.with_suffix(".chk").name)
 
     if delete_chk:
@@ -612,14 +726,19 @@ def main(args) -> None:
     # Iterate through the files
     if args.parallel:
         with multiprocessing.Pool() as p:
-            results = p.map(evaluate_g16_logfile, files)
+            results = p.starmap(evaluate_g16_logfile, zip(files,
+                                                          itertools.repeat(args.window),
+                                                          itertools.repeat(args.tolerance),
+                                                          itertools.repeat(args.no_oscillation_criteria)))
             completed = [x[0] for x in results if x[1] is None]
             failed = {x[0]: x[1] for x in results if x[1] is not None}
     else:
         for file in files:
 
-            file, logfile_assessment, file_text = evaluate_g16_logfile(file)
-
+            file, logfile_assessment, file_text = evaluate_g16_logfile(file,
+                                                                       window=args.window,
+                                                                       tolerance=args.tolerance,
+                                                                       check_oscillation=args.no_oscillation_criteria)
             if args.line_by_line:
                 if file_text is None:
                     print(f'Could not perform line-by-line analysis because {logfile_assessment}')
@@ -641,14 +760,15 @@ def main(args) -> None:
                                       completed=completed,
                                       files=files,
                                       parent_dir=parent_dir,
-                                      delete_chk = bool(args.deletechk))
+                                      delete_chk=bool(args.deletechk),
+                                      dry=bool(args.dry))
 
     print(f'Total analysis time (s): {round(time.time() - t1,2)}')
 
 if __name__ == "__main__":
-    args = get_args()
+    _args = get_args()
 
-    if args.deletechk:
+    if _args.deletechk:
         print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\n{bcolors.ENDC}')
         print(f'{bcolors.WARNING}You have selected to delete .chk files. This action is permanent.{bcolors.ENDC}')
         print(f'{bcolors.WARNING}This feature is experimental and has not been fully tested.{bcolors.ENDC}')
@@ -660,4 +780,4 @@ if __name__ == "__main__":
             print(f'Response was {response.casefold}. Exiting gracefully.')
             exit()
 
-    main(args)
+    main(_args)
