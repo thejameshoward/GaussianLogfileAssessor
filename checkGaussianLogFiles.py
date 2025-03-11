@@ -78,7 +78,7 @@ def get_args() -> argparse.Namespace:
                         dest='tolerance',
                         required=False,
                         type=float,
-                        default='1e-4',
+                        default='1e-5',
                         help='Sets the tolerance value for determining oscillating optimizations.\n\n')
 
     parser.add_argument('-w', '--window',
@@ -123,8 +123,7 @@ def set_single_proc_affinity():
         proc = psutil.Process()
         proc.cpu_affinity([proc.cpu_affinity()[0]])
     except ModuleNotFoundError:
-        print(f'[WARNING] psutil module was not found. Running on multiple cores!')
-        pass
+        print('[WARNING] psutil module was not found. Running on multiple cores!')
 
 def get_file_text(file: Path) -> str:
     '''
@@ -151,7 +150,7 @@ def get_file_text(file: Path) -> str:
     with open(file, 'r', encoding='utf-8') as infile:
         return infile.read()
 
-def get_job_start_line_numbers(text: str) -> list[int]:
+def get_job_start_line_numbers(split_text: list(str)) -> list[int]:
     '''
     Identifies line numbers in a Gaussian log file where a new
     computational job or link step begins.
@@ -168,18 +167,8 @@ def get_job_start_line_numbers(text: str) -> list[int]:
         are initiated. Each of these lines should be followed by a
         "Normal termination" line in a successfully completed calculation.
     '''
-    lines = text.split('\n')
 
-    # Lines after which a normal termination should appear
-    termination_indicator_lines = []
-
-    for i, line in enumerate(lines):
-        if re.match(LINK_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-
-    return termination_indicator_lines
+    return [i for i, line in enumerate(split_text) if LINK_PATTERN.match(line) or PROCEDING_JOB_STEP_PATTERN.match(line)]
 
 def get_job_error_line_numbers(text: str) -> list[int]:
     '''
@@ -190,51 +179,96 @@ def get_job_error_line_numbers(text: str) -> list[int]:
 
     error_lines = []
 
-    for i, line in enumerate(lines):
+    return [i for i, line in enumerate(lines) if FILEIO_ERROR_NON_EXISTENT_FILE.match(line) or ERRORNEOUS_WRITE.match(line) or N_STEPS_EXCEEDED.match(line)]
 
-        if re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
-            error_lines.append(i)
-
-        elif re.match(ERRORNEOUS_WRITE, line) is not None:
-            error_lines.append(i)
-
-        elif re.match(N_STEPS_EXCEEDED, line) is not None:
-            error_lines.append(i)
-
-    return error_lines
-
-def get_termination_line_numbers(text: str) -> list[int]:
+def get_termination_line_numbers(split_text: list[str]) -> list[int]:
     '''
     Gets the line numbers that indicate a new link
     or an internal job. Successful calculations should
     have a "Normal termination" line after each of these.
     '''
-    lines = text.split('\n')
 
     # Lines after which a normal termination should appear
     terms = []
-    for i, line in enumerate(lines):
+
+    for i, line in enumerate(split_text):
         if ' Normal termination of Gaussian 16' in line:
             terms.append(i)
     return terms
 
 def get_n_normal_terminations(text: str) -> int:
+    '''
+    Counts the number of normal terminations in a Gaussian 16 log file.
+
+    Parameters
+    ----------
+    text : str
+        The raw text content of a Gaussian 16 log file.
+
+    Returns
+    ----------
+    int
+        The number of occurrences of the "Normal termination" pattern.
+    '''
     return len(re.findall(NORM_TERM_PATTERN, text))
 
 def get_n_links(text: str) -> int:
+    '''
+    Counts the number of link steps in a Gaussian 16 log file.
+
+    Parameters
+    ----------
+    text : str
+        The raw text content of a Gaussian 16 log file.
+
+    Returns
+    ----------
+    int
+        The number of link steps found in the log file.
+    '''
     return len(re.findall(LINK_PATTERN, text))
 
 def has_imaginary_frequency(text: str) -> tuple[bool, float]:
     '''
-    Determines if log file has imaginary frequencies
+    Determines if the Gaussian log file contains any imaginary frequencies.
+
+    Parameters
+    ----------
+    text : str
+        The raw text content of a Gaussian 16 log file.
+
+    Returns
+    ----------
+    tuple[bool, float]
+        - A boolean value indicating whether an imaginary frequency is present.
+          `True` if an imaginary frequency is found (i.e., frequency ≤ 0), `False` otherwise.
+        - The first imaginary frequency value (if present) as a float. Returns 0.0 if no imaginary frequency is found.
     '''
-    return float(re.split(r'\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0]) <= 0, float(re.split(r'\s+', re.search(FREQ_START_PATTERN, text).group().strip())[0])
+    match = re.search(FREQ_START_PATTERN, text)
+    if match:
+        # Extract the frequency value from the matched text
+        freq = float(re.split(r'\s+', match.group().strip())[0])
+        return freq <= 0, freq
+
+    # Return False and 0.0 if no match is found
+    return False, 0.0
 
 def has_frequency_section(text: str) -> bool:
     '''
-    Determines if log file has a frequency section
+    Determines if the Gaussian log file contains a frequency section.
+
+    Parameters
+    ----------
+    text : str
+        The raw text content of a Gaussian 16 log file.
+
+    Returns
+    ----------
+    bool
+        True if the log file contains a frequency section (as indicated by the `FREQ_START_PATTERN`),
+        False otherwise.
     '''
-    return re.search(FREQ_START_PATTERN, text) is not None
+    return bool(re.search(FREQ_START_PATTERN, text))
 
 def print_line_by_line_analysis(file: Path, text: str):
 
@@ -516,8 +550,8 @@ def evaluate_g16_logfile(file: Path,
 
     # Get the lines at which jobs start
     # and normal termination lines appear
-    job_lines = get_job_start_line_numbers(text)
-    term_lines = get_termination_line_numbers(text)
+    job_lines = get_job_start_line_numbers(split_text=split_text)
+    term_lines = get_termination_line_numbers(split_text=split_text)
     error_lines = get_job_error_line_numbers(text)
 
     atomic_number_out_of_range, out_of_range_line = has_atomic_number_out_of_basis_set(split_text=split_text)
