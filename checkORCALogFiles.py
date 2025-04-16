@@ -21,6 +21,8 @@ DESCRIPTION = '🦝 Analyzes ORCA 6 log files for common errors 🦝.'
 
 LINK_PATTERN = re.compile(r' Entering Link\s+\d+', re.DOTALL)
 INCOMPLETE_GEOM_OPT_PATTERN = re.compile(r'ERROR \!\!\!\n\s+The optimization did not converge but reached the maximum', re.DOTALL)
+ZERO_DISTANCE_ERROR_PATTERN = re.compile(r'Zero distance between atoms \d+ and \d+ in Cartesian2Internal', re.DOTALL)
+MULTIPLICITY_ERROR_PATTERN = re.compile(r'multiplicity \(\d+\) .+ and number of electrons \(\d+\) .+ -> impossible')
 
 class bcolors:
     HEADER = '\033[95m'
@@ -262,6 +264,15 @@ def evaluate_orca_out_file(file: Path) -> tuple[Path, None, str] | tuple[Path, s
     # Check for failed geometry optimization error
     if len(re.findall(INCOMPLETE_GEOM_OPT_PATTERN, text)) != 0:
         return file, 'incomplete geometry optimization', text
+
+    zero_distance_errors = re.findall(ZERO_DISTANCE_ERROR_PATTERN, text)
+    if zero_distance_errors:
+        return file, str(zero_distance_errors[0]), text
+
+    multiplicity_errors = re.findall(MULTIPLICITY_ERROR_PATTERN, text)
+    if multiplicity_errors:
+        return file, str(multiplicity_errors[0]), text
+
 
     # Check for this warning
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

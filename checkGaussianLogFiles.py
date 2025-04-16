@@ -47,8 +47,8 @@ class bcolors:
 
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=DESCRIPTION,
-                                    formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, 2, 40),
-                                    usage=argparse.SUPPRESS)
+                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, 2, 40),
+                                     usage=argparse.SUPPRESS)
 
     parser.add_argument('-i', '--input',
                         dest='input',
