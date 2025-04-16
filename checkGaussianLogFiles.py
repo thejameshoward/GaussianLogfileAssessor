@@ -52,11 +52,8 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('-i', '--input',
                         dest='input',
-                        help='Directory/file to analyze. (default=cwd)\n\n')
-
-    parser.add_argument('--debug',
-                        action='store_true',
-                        help='Debug information\n\n')
+                        help='Directory or file to analyze. (default=cwd)\n\n',
+                        metavar='')
 
     parser.add_argument('--line-by-line',
                         action='store_true',
@@ -68,29 +65,35 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('-p', '--parallel',
                         action='store_true',
-                        help='Uses multiprocessing to rapidly analyze files.\n\n')
+                        help='Uses multiprocessing to analyze files\n\n')
 
     parser.add_argument('--deletechk',
                         action='store_true',
-                        help='Deletes ALL large .chk files that have a corresponding log instead of moving them.\n\n')
+                        help='Deletes all .chk files that have a corresponding completed .log file\n\n')
 
     parser.add_argument('-t', '--tolerance',
                         dest='tolerance',
                         required=False,
                         type=float,
                         default='1e-5',
-                        help='Sets the tolerance value for determining oscillating optimizations.\n\n')
+                        help='Sets the tolerance value for determining oscillating optimizations (default=1e-5).\n\n',
+                        metavar='')
 
     parser.add_argument('-w', '--window',
                         dest='window',
                         required=False,
                         type=int,
                         default=10,
-                        help='Number of optimization steps to look at when evaluating oscillations.\n\n')
+                        help='Number of optimization steps to look at when evaluating oscillations (default=10).\n\n',
+                        metavar='')
 
     parser.add_argument('--no-oscillation-criteria',
                         action='store_false',
-                        help='Disables detection of oscillations to increase assessment speed. Oscillations appear as ambiguous failed jobs.\n\n')
+                        help='Disables detection of oscillations to increase assessment speed.\nOscillations appear as ambiguous failed jobs\n\n')
+
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help='Print debug information\n\n')
 
     args = parser.parse_args()
 
