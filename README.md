@@ -38,20 +38,26 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
 
     ```checkGaussianLogFiles.py -i data/ --line-by-line```
 
+-  Run the analysis in the current working directory without moving files (note that the `-i` flag is not specified)
+
+    ```checkGaussianLogFiles.py --dry```
+
 -  Run the analysis on a single .log file
 
-    ```checkGaussianLogFiles.py -i data/james.log --debug --dry```
+    ```checkGaussianLogFiles.py -i data/james.log --dry```
 
 -  Delete .chk files that have a corresponding completed .log file (EXPERIMENTAL)
 
-    ```checkGaussianLogFiles.py -i data/ --debug --deletechk```
+    ```checkGaussianLogFiles.py -i data/ --deletechk```
 
--  Use multiprocessing to process files much faster (>10x speedup).<br>
-
-> [!NOTE]
-> This will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. These should be run on compute nodes with at least 8 cores. <br>
+-  Use multiprocessing to process files much faster (>10x speedup).
 
     ```checkGaussianLogFiles.py -i data/ --parallel```
+
+> [!NOTE]
+> The command above will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. These should be run on compute nodes with at least 8 cores.
+
+
 
 ## CLI Flags
 
