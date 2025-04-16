@@ -55,7 +55,8 @@ a directory to PATH, see [https://askubuntu.com/questions/402353/how-to-add-home
     ```checkGaussianLogFiles.py -i data/ --parallel```
 
 > [!NOTE]
-> The command above will use multiple processors and upset any resource allocation manager (Arbiter 2) on a shared systems. These should be run on compute nodes with at least 8 cores.
+> The command above will use multiple processors and upset any resource allocation manager (e.g., Arbiter 2) on shared systems.
+> These should be run on compute nodes with at least 8 cores.
 
 
 
