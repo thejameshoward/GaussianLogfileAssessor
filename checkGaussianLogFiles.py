@@ -355,6 +355,24 @@ def job_preempted(file: Path) -> bool:
         return True
     return False
 
+def slurm_oom_kill(file: Path) -> bool:
+    '''
+    Gets the slurm .error file and determines if oom_kill event
+    was found in its contents
+    '''
+    slurm_out = get_slurm_error_file(file)
+
+    if slurm_out is None:
+        return False
+
+    with open(slurm_out, 'r') as infile:
+        lines = infile.readlines()
+
+    if 'oom_kill' in lines[-1]:
+        return True
+
+    return False
+
 def job_cancelled(file: Path) -> bool:
     slurm_out = get_slurm_error_file(file)
 
@@ -543,6 +561,10 @@ def evaluate_g16_logfile(file: Path,
     if job_preempted(file):
         return file, 'was PREEMPTED', text
 
+    # Check for oom_kill
+    if slurm_oom_kill(file):
+        return file, 'of an oom_kill event', text
+
     # Check for CANCELLED
     if job_cancelled(file):
         return file, 'was CANCELLED by user', text
@@ -659,6 +681,17 @@ def print_analysis_and_move_files(failed: dict,
                 if not dry:
                     shutil.move(parent_dir / file.with_suffix(".chk").name, completed_dir / file.with_suffix(".chk").name)
 
+            # Additional checks for kraken-formatted chk files
+            sp_ra_chk = Path(file.parent / f'{file.stem}_sp_ra.chk')
+            sp_rc_chk = Path(file.parent / f'{file.stem}_sp_rc.chk')
+            sp_solv_chk = Path(file.parent / f'{file.stem}_sp_solv.chk')
+            wfn = Path(file.parent / f'{file.stem}.wfn')
+            for _kraken_chk in [sp_ra_chk, sp_rc_chk, sp_solv_chk, wfn]:
+                if _kraken_chk.exists():
+                    print(f'{bcolors.OKGREEN}{_kraken_chk.name}{bcolors.ENDC}')
+                    if not dry:
+                        shutil.move(_kraken_chk, completed_dir / _kraken_chk.name)
+
     print('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
     for file in failed.keys():
 
@@ -676,6 +709,17 @@ def print_analysis_and_move_files(failed: dict,
                 print(f'{bcolors.FAIL}{file.with_suffix(".chk").name}{bcolors.ENDC}')
                 if not dry:
                     shutil.move(parent_dir / file.with_suffix(".chk").name, failed_dir / file.with_suffix(".chk").name)
+
+            # Additional checks for kraken-formatted chk files
+            sp_ra_chk = Path(file.parent / f'{file.stem}_sp_ra.chk')
+            sp_rc_chk = Path(file.parent / f'{file.stem}_sp_rc.chk')
+            sp_solv_chk = Path(file.parent / f'{file.stem}_sp_solv.chk')
+            wfn = Path(file.parent / f'{file.stem}.wfn')
+            for _kraken_chk in [sp_ra_chk, sp_rc_chk, sp_solv_chk, wfn]:
+                if _kraken_chk.exists():
+                    print(f'{bcolors.FAIL}{_kraken_chk.name}{bcolors.ENDC}')
+                    if not dry:
+                        shutil.move(_kraken_chk, failed_dir / _kraken_chk.name)
 
     if delete_chk:
         print('-------------------------------DELETING CHK FILES-------------------------------')

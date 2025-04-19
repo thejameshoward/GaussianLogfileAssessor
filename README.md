@@ -64,7 +64,29 @@ containing your `.log` files, run the script with the dry flag first to run the 
 > The command above will use multiple processors and upset any resource allocation manager (e.g., Arbiter 2) on shared systems.
 > These should be run on compute nodes with at least 8 cores.
 
+## How it works
+checkGaussianLogFiles.py will check for an alternating pattern of calculation starts and completions. It is designed to detect both internal
+jobs (e.g., frequency calculations) as well as additional jobs specified by the user in the input file. In addition to checking for errors
+that happen within G16, the script will attempt to locate a .error file written by SLURM to check for errors that happen outside of G16. If
+this file is not present, a specific reason for the job failing may not be provided and you will see errors like "<your_file>.log failed because
+job on line 6 failed". This ambiguous message is printed by default if a specific reason is not found.
+<br>
+<br>
+If you happen to find a specific error in G16 that is not identified in the current script, please open an issue on this repository and include the .log
+file. Below is a list of errors currently identified by the script.
+<br>
+<br>
+    SLURM errors detected (only found if a .error file is identified with your .log file)
+        1. Preemption
+        2. oom_kill events
+        3. Cancelled by user
 
+    G16 errors detected
+        1. Atomic number out of range for a particular basis set
+        2. Combination of multiplicity and number of electrons is impossible
+        3. Erroneous write errors (files moved or overwritten during calculation)
+        4. Negative vibration frequencies
+        5. Oscillating optimization criteria
 
 ## CLI Flags
 
