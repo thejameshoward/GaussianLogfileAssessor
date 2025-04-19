@@ -36,10 +36,6 @@ containing your `.log` files, run the script with the dry flag first to run the 
 
     ```checkGaussianLogFiles.py```
 
--  Run the script on __different__ directory containing the `.log` files without moving any files using the `--dry` flag (recommended).
-
-    ```checkGaussianLogFiles.py -i data/ --dry```
-
 -  Run the same analysis and move files into respective directories.
 
     ```checkGaussianLogFiles.py -i data/```
@@ -51,10 +47,6 @@ containing your `.log` files, run the script with the dry flag first to run the 
 -  Run the analysis on a single .log file
 
     ```checkGaussianLogFiles.py -i data/james.log --dry```
-
--  Delete .chk files that have a corresponding completed .log file (EXPERIMENTAL)
-
-    ```checkGaussianLogFiles.py -i data/ --deletechk```
 
 -  Use multiprocessing to process files much faster (>10x speedup).
 
