@@ -76,17 +76,17 @@ If you happen to find a specific error in G16 that is not identified in the curr
 file. Below is a list of errors currently identified by the script.
 <br>
 <br>
-    SLURM errors detected (only found if a .error file is identified with your .log file)
-        1. Preemption
-        2. oom_kill events
-        3. Cancelled by user
+__SLURM errors detected__ (only found if a .error file is identified with your .log file)
+1. Preemption
+2. oom_kill events
+3. Cancelled by user
 
-    G16 errors detected
-        1. Atomic number out of range for a particular basis set
-        2. Combination of multiplicity and number of electrons is impossible
-        3. Erroneous write errors (files moved or overwritten during calculation)
-        4. Negative vibration frequencies
-        5. Oscillating optimization criteria
+__G16 errors detected__
+1. Atomic number out of range for a particular basis set
+2. Combination of multiplicity and number of electrons is impossible
+3. Erroneous write errors (files moved or overwritten during calculation)
+4. Negative vibration frequencies
+5. Oscillating optimization criteria
 
 ## CLI Flags
 
