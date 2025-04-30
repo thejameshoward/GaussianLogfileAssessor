@@ -490,7 +490,7 @@ def detect_alternation(series: Iterable[float],
 
 def check_oscillating_optimization_criteria(text: str,
                                             window: int = 10,
-                                            tolerance: float = 1e-4) -> tuple[bool, str | None]:
+                                            tolerance: float = 1e-4) -> tuple[bool, None] | tuple[bool, str]:
     '''
     Tests whether an optimization is oscillating
     '''
@@ -550,6 +550,8 @@ def evaluate_g16_logfile(file: Path,
     tuple[Path, None, None]
         If the logfile is incomplete or running, returns the file path and None values.
     '''
+    is_oscillating = False
+
     try:
         text = get_file_text(file)
     except UnicodeDecodeError:
@@ -596,12 +598,15 @@ def evaluate_g16_logfile(file: Path,
 
     # Check for oscillation
     if check_oscillation:
+
+        # Get the oscillation criteria, but don't return it yet
+        # since an oscillating optimization can eventually converge
         is_oscillating, oscillation_reason = check_oscillating_optimization_criteria(text,
                                                                                     window=window,
                                                                                     tolerance=tolerance)
 
-        if is_oscillating:
-            return file, oscillation_reason, text
+        #if is_oscillating:
+        #    return file, oscillation_reason, text
 
     # If a specific error can be identified
     # use the text of the line as the "reason"
@@ -612,11 +617,28 @@ def evaluate_g16_logfile(file: Path,
     for i, job_start in enumerate(job_lines):
 
         # Check if a termination line proceeded the job start line
+        # This indicates a failed job
         try:
             if job_start > term_lines[i]:
-                return file, f'job on line {job_start + 1} failed.', text
+
+                # If we checked oscillation and it is oscillating, return specifics
+                if check_oscillation:
+                    if is_oscillating:
+                        return file, oscillation_reason, text
+                    else:
+                        return file, f'job on line {job_start + 1} failed.', text
+                # Otherwise, return a non specific failure
+                else:
+                    return file, f'job on line {job_start + 1} failed.', text
         except IndexError:
-            return file, f'job on line {job_start + 1} failed.', text
+
+            if check_oscillation:
+                if is_oscillating:
+                    return file, oscillation_reason, text
+                else:
+                    return file, f'job on line {job_start + 1} failed.', text
+            else:
+                return file, f'job on line {job_start + 1} failed.', text
 
     return file, None, text
 
