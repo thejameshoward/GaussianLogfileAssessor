@@ -4,9 +4,9 @@
  Initial command:
  /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe "/scratch/general/vast/u6053008/3385824-notchpeak.peaks/Gau-1885054.inp" -scrdir="/scratch/general/vast/u6053008/3385824-notchpeak.peaks/"
  Entering Link 1 = /uufs/chpc.utah.edu/sys/installdir/gaussian16/C01/AVX/g16/l1.exe PID=   1885057.
-  
+
  Copyright (c) 1988-2019, Gaussian, Inc.  All Rights Reserved.
-  
+
  This is part of the Gaussian(R) 16 program.  It is based on
  the Gaussian(R) 09 system (copyright 2009, Gaussian, Inc.),
  the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
@@ -19,28 +19,28 @@
  University), and the Gaussian 82(TM) system (copyright 1983,
  Carnegie Mellon University). Gaussian is a federally registered
  trademark of Gaussian, Inc.
-  
+
  This software contains proprietary and confidential information,
  including trade secrets, belonging to Gaussian, Inc.
-  
+
  This software is provided under written license and may be
  used, copied, transmitted, or stored only in accord with that
  written license.
-  
+
  The following legend is applicable only to US Government
  contracts under FAR:
-  
+
                     RESTRICTED RIGHTS LEGEND
-  
+
  Use, reproduction and disclosure by the US Government is
  subject to restrictions as set forth in subparagraphs (a)
  and (c) of the Commercial Computer Software - Restricted
  Rights clause in FAR 52.227-19.
-  
+
  Gaussian, Inc.
  340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
-  
-  
+
+
  ---------------------------------------------------------------
  Warning -- This program may not be used in any manner that
  competes with the business of Gaussian, Inc. or will provide
@@ -53,30 +53,30 @@
  licensee that it is not a competitor of Gaussian, Inc. and that
  it will not use this program in any manner prohibited above.
  ---------------------------------------------------------------
-  
+
 
  Cite this work as:
  Gaussian 16, Revision C.01,
- M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria, 
- M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone, 
- G. A. Petersson, H. Nakatsuji, X. Li, M. Caricato, A. V. Marenich, 
- J. Bloino, B. G. Janesko, R. Gomperts, B. Mennucci, H. P. Hratchian, 
- J. V. Ortiz, A. F. Izmaylov, J. L. Sonnenberg, D. Williams-Young, 
- F. Ding, F. Lipparini, F. Egidi, J. Goings, B. Peng, A. Petrone, 
- T. Henderson, D. Ranasinghe, V. G. Zakrzewski, J. Gao, N. Rega, 
- G. Zheng, W. Liang, M. Hada, M. Ehara, K. Toyota, R. Fukuda, 
- J. Hasegawa, M. Ishida, T. Nakajima, Y. Honda, O. Kitao, H. Nakai, 
- T. Vreven, K. Throssell, J. A. Montgomery, Jr., J. E. Peralta, 
- F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin, 
- V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand, 
- K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar, 
- J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi, 
- J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas, 
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria,
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone,
+ G. A. Petersson, H. Nakatsuji, X. Li, M. Caricato, A. V. Marenich,
+ J. Bloino, B. G. Janesko, R. Gomperts, B. Mennucci, H. P. Hratchian,
+ J. V. Ortiz, A. F. Izmaylov, J. L. Sonnenberg, D. Williams-Young,
+ F. Ding, F. Lipparini, F. Egidi, J. Goings, B. Peng, A. Petrone,
+ T. Henderson, D. Ranasinghe, V. G. Zakrzewski, J. Gao, N. Rega,
+ G. Zheng, W. Liang, M. Hada, M. Ehara, K. Toyota, R. Fukuda,
+ J. Hasegawa, M. Ishida, T. Nakajima, Y. Honda, O. Kitao, H. Nakai,
+ T. Vreven, K. Throssell, J. A. Montgomery, Jr., J. E. Peralta,
+ F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin,
+ V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand,
+ K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar,
+ J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi,
+ J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas,
  J. B. Foresman, and D. J. Fox, Gaussian, Inc., Wallingford CT, 2019.
- 
+
  ******************************************
  Gaussian 16:  ES64L-G16RevC.01  3-Jul-2019
-                26-Feb-2025 
+                26-Feb-2025
  ******************************************
  %NProcShared=16
  Will use up to   16 processors via shared memory.
@@ -117,35 +117,35 @@
  ------------------------------
  Symbolic Z-matrix:
  Charge =  0 Multiplicity = 1
- C                    -4.81144  -0.38878   1.37361 
- O                    -4.88835  -0.72608   0.01703 
- C                    -4.14662   0.10465  -0.82324 
- C                    -2.68824  -0.00379  -0.6401 
- C                    -1.49169  -0.09131  -0.46861 
- C                    -0.07527  -0.23403  -0.27635 
- C                     0.47929  -1.50592  -0.25718 
- C                     1.86402  -1.67358  -0.0653 
- O                     2.40721  -2.90446  -0.04386 
- C                     2.72096  -0.58425   0.10658 
- C                     4.19945  -0.7412    0.30954 
- C                     2.15446   0.70263   0.08504 
- O                     2.9719    1.73299   0.24863 
- C                     0.76063   0.89902  -0.10273 
- C                     0.22735   2.25078  -0.11061 
- O                     0.9114    3.25661   0.03399 
- H                    -3.78135  -0.47841   1.76537 
- H                    -5.16328   0.64509   1.55727 
- H                    -5.45967  -1.08376   1.9226 
- H                    -4.43849   1.16761  -0.69652 
- H                    -4.39987  -0.1802   -1.85566 
- H                    -0.1648   -2.37762  -0.39211 
- H                     1.72271  -3.5675   -0.17367 
- H                     4.49025  -1.79742   0.29441 
- H                     4.50769  -0.30126   1.2702 
- H                     4.75678  -0.20717  -0.47495 
- H                     2.42521   2.55573   0.21047 
- H                    -0.86982   2.34709  -0.25757 
- 
+ C                    -4.81144  -0.38878   1.37361
+ O                    -4.88835  -0.72608   0.01703
+ C                    -4.14662   0.10465  -0.82324
+ C                    -2.68824  -0.00379  -0.6401
+ C                    -1.49169  -0.09131  -0.46861
+ C                    -0.07527  -0.23403  -0.27635
+ C                     0.47929  -1.50592  -0.25718
+ C                     1.86402  -1.67358  -0.0653
+ O                     2.40721  -2.90446  -0.04386
+ C                     2.72096  -0.58425   0.10658
+ C                     4.19945  -0.7412    0.30954
+ C                     2.15446   0.70263   0.08504
+ O                     2.9719    1.73299   0.24863
+ C                     0.76063   0.89902  -0.10273
+ C                     0.22735   2.25078  -0.11061
+ O                     0.9114    3.25661   0.03399
+ H                    -3.78135  -0.47841   1.76537
+ H                    -5.16328   0.64509   1.55727
+ H                    -5.45967  -1.08376   1.9226
+ H                    -4.43849   1.16761  -0.69652
+ H                    -4.39987  -0.1802   -1.85566
+ H                    -0.1648   -2.37762  -0.39211
+ H                     1.72271  -3.5675   -0.17367
+ H                     4.49025  -1.79742   0.29441
+ H                     4.50769  -0.30126   1.2702
+ H                     4.75678  -0.20717  -0.47495
+ H                     2.42521   2.55573   0.21047
+ H                    -0.86982   2.34709  -0.25757
+
 
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
  Berny optimization.
@@ -285,7 +285,7 @@
  Number of steps in this run=    134 maximum allowed number of steps=    168.
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -425,7 +425,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -1096,12 +1096,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000007     0.000450     YES
  RMS     Force            0.000002     0.000300     YES
- Maximum Displacement     0.643752     0.001800     NO 
- RMS     Displacement     0.168504     0.001200     NO 
+ Maximum Displacement     0.643752     0.001800     NO
+ RMS     Displacement     0.168504     0.001200     NO
  Predicted change in Energy=-4.500597D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -1241,7 +1241,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -1556,12 +1556,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000151     0.000450     YES
  RMS     Force            0.000037     0.000300     YES
- Maximum Displacement     0.560131     0.001800     NO 
- RMS     Displacement     0.146765     0.001200     NO 
+ Maximum Displacement     0.560131     0.001800     NO
+ RMS     Displacement     0.146765     0.001200     NO
  Predicted change in Energy=-6.022575D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -1701,7 +1701,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -2024,12 +2024,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000026     0.000450     YES
  RMS     Force            0.000005     0.000300     YES
- Maximum Displacement     0.693474     0.001800     NO 
- RMS     Displacement     0.171489     0.001200     NO 
+ Maximum Displacement     0.693474     0.001800     NO
+ RMS     Displacement     0.171489     0.001200     NO
  Predicted change in Energy=-1.360990D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -2169,7 +2169,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -2485,12 +2485,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000225     0.000450     YES
  RMS     Force            0.000041     0.000300     YES
- Maximum Displacement     1.044660     0.001800     NO 
- RMS     Displacement     0.261545     0.001200     NO 
+ Maximum Displacement     1.044660     0.001800     NO
+ RMS     Displacement     0.261545     0.001200     NO
  Predicted change in Energy=-1.701128D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -2630,7 +2630,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -2945,14 +2945,14 @@
    D49        0.00362   0.00000  -0.00011  -0.00092  -0.00103   0.00259
    D50       -3.13681  -0.00001   0.00006  -0.00123  -0.00118  -3.13798
          Item               Value     Threshold  Converged?
- Maximum Force            0.000456     0.000450     NO 
+ Maximum Force            0.000456     0.000450     NO
  RMS     Force            0.000072     0.000300     YES
- Maximum Displacement     0.484730     0.001800     NO 
- RMS     Displacement     0.124428     0.001200     NO 
+ Maximum Displacement     0.484730     0.001800     NO
+ RMS     Displacement     0.124428     0.001200     NO
  Predicted change in Energy=-7.022814D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -3092,7 +3092,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -3415,12 +3415,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000097     0.000450     YES
  RMS     Force            0.000019     0.000300     YES
- Maximum Displacement     0.044531     0.001800     NO 
- RMS     Displacement     0.011356     0.001200     NO 
+ Maximum Displacement     0.044531     0.001800     NO
+ RMS     Displacement     0.011356     0.001200     NO
  Predicted change in Energy=-2.828115D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -3560,7 +3560,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -3882,12 +3882,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000065     0.000450     YES
  RMS     Force            0.000012     0.000300     YES
- Maximum Displacement     0.727723     0.001800     NO 
- RMS     Displacement     0.177911     0.001200     NO 
+ Maximum Displacement     0.727723     0.001800     NO
+ RMS     Displacement     0.177911     0.001200     NO
  Predicted change in Energy=-7.965485D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -4027,7 +4027,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -4340,12 +4340,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000118     0.000450     YES
  RMS     Force            0.000026     0.000300     YES
- Maximum Displacement     0.722973     0.001800     NO 
- RMS     Displacement     0.173221     0.001200     NO 
+ Maximum Displacement     0.722973     0.001800     NO
+ RMS     Displacement     0.173221     0.001200     NO
  Predicted change in Energy=-1.783422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -4485,7 +4485,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -4803,12 +4803,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000379     0.000450     YES
  RMS     Force            0.000065     0.000300     YES
- Maximum Displacement     0.140921     0.001800     NO 
- RMS     Displacement     0.034372     0.001200     NO 
+ Maximum Displacement     0.140921     0.001800     NO
+ RMS     Displacement     0.034372     0.001200     NO
  Predicted change in Energy=-3.665361D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -4948,7 +4948,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -5271,12 +5271,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000032     0.000450     YES
  RMS     Force            0.000010     0.000300     YES
- Maximum Displacement     0.722254     0.001800     NO 
- RMS     Displacement     0.179322     0.001200     NO 
+ Maximum Displacement     0.722254     0.001800     NO
+ RMS     Displacement     0.179322     0.001200     NO
  Predicted change in Energy=-1.573001D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -5416,7 +5416,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -5731,12 +5731,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000245     0.000450     YES
  RMS     Force            0.000045     0.000300     YES
- Maximum Displacement     1.234872     0.001800     NO 
- RMS     Displacement     0.313960     0.001200     NO 
+ Maximum Displacement     1.234872     0.001800     NO
+ RMS     Displacement     0.313960     0.001200     NO
  Predicted change in Energy=-3.012761D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -5876,7 +5876,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -6191,14 +6191,14 @@
    D49        0.00380   0.00000  -0.00002  -0.00126  -0.00128   0.00252
    D50       -3.13664  -0.00001   0.00023  -0.00163  -0.00140  -3.13804
          Item               Value     Threshold  Converged?
- Maximum Force            0.000491     0.000450     NO 
+ Maximum Force            0.000491     0.000450     NO
  RMS     Force            0.000079     0.000300     YES
- Maximum Displacement     0.667050     0.001800     NO 
- RMS     Displacement     0.175047     0.001200     NO 
+ Maximum Displacement     0.667050     0.001800     NO
+ RMS     Displacement     0.175047     0.001200     NO
  Predicted change in Energy=-1.745066D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -6338,7 +6338,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -6661,12 +6661,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000102     0.000450     YES
  RMS     Force            0.000019     0.000300     YES
- Maximum Displacement     0.031952     0.001800     NO 
- RMS     Displacement     0.008681     0.001200     NO 
+ Maximum Displacement     0.031952     0.001800     NO
+ RMS     Displacement     0.008681     0.001200     NO
  Predicted change in Energy=-4.513135D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -6806,7 +6806,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -7133,12 +7133,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000049     0.000450     YES
  RMS     Force            0.000009     0.000300     YES
- Maximum Displacement     0.060673     0.001800     NO 
- RMS     Displacement     0.016973     0.001200     NO 
+ Maximum Displacement     0.060673     0.001800     NO
+ RMS     Displacement     0.016973     0.001200     NO
  Predicted change in Energy=-3.462000D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -7278,7 +7278,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -7600,12 +7600,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000013     0.000450     YES
  RMS     Force            0.000003     0.000300     YES
- Maximum Displacement     0.628988     0.001800     NO 
- RMS     Displacement     0.155645     0.001200     NO 
+ Maximum Displacement     0.628988     0.001800     NO
+ RMS     Displacement     0.155645     0.001200     NO
  Predicted change in Energy=-7.324790D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -7745,7 +7745,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -8052,12 +8052,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000173     0.000450     YES
  RMS     Force            0.000032     0.000300     YES
- Maximum Displacement     0.733138     0.001800     NO 
- RMS     Displacement     0.180292     0.001200     NO 
+ Maximum Displacement     0.733138     0.001800     NO
+ RMS     Displacement     0.180292     0.001200     NO
  Predicted change in Energy=-3.244591D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -8197,7 +8197,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -8520,12 +8520,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000305     0.000450     YES
  RMS     Force            0.000054     0.000300     YES
- Maximum Displacement     0.488609     0.001800     NO 
- RMS     Displacement     0.126784     0.001200     NO 
+ Maximum Displacement     0.488609     0.001800     NO
+ RMS     Displacement     0.126784     0.001200     NO
  Predicted change in Energy=-6.218352D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -8665,7 +8665,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -8979,12 +8979,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000195     0.000450     YES
  RMS     Force            0.000050     0.000300     YES
- Maximum Displacement     0.595193     0.001800     NO 
- RMS     Displacement     0.158857     0.001200     NO 
+ Maximum Displacement     0.595193     0.001800     NO
+ RMS     Displacement     0.158857     0.001200     NO
  Predicted change in Energy=-1.956880D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -9124,7 +9124,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -9440,12 +9440,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.682900     0.001800     NO 
- RMS     Displacement     0.178891     0.001200     NO 
+ Maximum Displacement     0.682900     0.001800     NO
+ RMS     Displacement     0.178891     0.001200     NO
  Predicted change in Energy=-6.892775D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -9585,7 +9585,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -9899,12 +9899,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000177     0.000450     YES
  RMS     Force            0.000038     0.000300     YES
- Maximum Displacement     0.682133     0.001800     NO 
- RMS     Displacement     0.178691     0.001200     NO 
+ Maximum Displacement     0.682133     0.001800     NO
+ RMS     Displacement     0.178691     0.001200     NO
  Predicted change in Energy=-1.976851D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -10044,7 +10044,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -10361,12 +10361,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.690907     0.001800     NO 
- RMS     Displacement     0.180779     0.001200     NO 
+ Maximum Displacement     0.690907     0.001800     NO
+ RMS     Displacement     0.180779     0.001200     NO
  Predicted change in Energy=-7.140467D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -10506,7 +10506,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -10821,12 +10821,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.690827     0.001800     NO 
- RMS     Displacement     0.180759     0.001200     NO 
+ Maximum Displacement     0.690827     0.001800     NO
+ RMS     Displacement     0.180759     0.001200     NO
  Predicted change in Energy=-1.975398D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -10966,7 +10966,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -11283,12 +11283,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691379     0.001800     NO 
- RMS     Displacement     0.180888     0.001200     NO 
+ Maximum Displacement     0.691379     0.001800     NO
+ RMS     Displacement     0.180888     0.001200     NO
  Predicted change in Energy=-7.158027D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -11428,7 +11428,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -11743,12 +11743,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691376     0.001800     NO 
- RMS     Displacement     0.180889     0.001200     NO 
+ Maximum Displacement     0.691376     0.001800     NO
+ RMS     Displacement     0.180889     0.001200     NO
  Predicted change in Energy=-1.975431D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -11888,7 +11888,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -12205,12 +12205,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691411     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691411     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158351D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -12350,7 +12350,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -12665,12 +12665,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691406     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691406     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975424D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -12810,7 +12810,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -13127,12 +13127,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691413     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691413     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158408D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -13272,7 +13272,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -13587,12 +13587,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691408     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691408     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -13732,7 +13732,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -14049,12 +14049,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691414     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691414     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158414D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -14194,7 +14194,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -14509,12 +14509,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691409     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691409     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975423D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -14654,7 +14654,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -14971,12 +14971,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.640028     0.001800     NO 
- RMS     Displacement     0.157508     0.001200     NO 
+ Maximum Displacement     0.640028     0.001800     NO
+ RMS     Displacement     0.157508     0.001200     NO
  Predicted change in Energy=-3.423873D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -15116,7 +15116,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -15433,12 +15433,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000154     0.000450     YES
  RMS     Force            0.000032     0.000300     YES
- Maximum Displacement     1.374459     0.001800     NO 
- RMS     Displacement     0.352206     0.001200     NO 
+ Maximum Displacement     1.374459     0.001800     NO
+ RMS     Displacement     0.352206     0.001200     NO
  Predicted change in Energy=-4.162104D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -15578,7 +15578,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -15895,14 +15895,14 @@
    D49        0.00400   0.00001  -0.00048  -0.00107  -0.00155   0.00245
    D50       -3.13643  -0.00001  -0.00033  -0.00135  -0.00168  -3.13811
          Item               Value     Threshold  Converged?
- Maximum Force            0.000527     0.000450     NO 
+ Maximum Force            0.000527     0.000450     NO
  RMS     Force            0.000085     0.000300     YES
- Maximum Displacement     0.782259     0.001800     NO 
- RMS     Displacement     0.208384     0.001200     NO 
+ Maximum Displacement     0.782259     0.001800     NO
+ RMS     Displacement     0.208384     0.001200     NO
  Predicted change in Energy=-6.092119D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -16042,7 +16042,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -16366,12 +16366,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000110     0.000450     YES
  RMS     Force            0.000021     0.000300     YES
- Maximum Displacement     0.025565     0.001800     NO 
- RMS     Displacement     0.004191     0.001200     NO 
+ Maximum Displacement     0.025565     0.001800     NO
+ RMS     Displacement     0.004191     0.001200     NO
  Predicted change in Energy=-4.914963D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -16511,7 +16511,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -16838,12 +16838,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000059     0.000450     YES
  RMS     Force            0.000012     0.000300     YES
- Maximum Displacement     0.058871     0.001800     NO 
- RMS     Displacement     0.016153     0.001200     NO 
+ Maximum Displacement     0.058871     0.001800     NO
+ RMS     Displacement     0.016153     0.001200     NO
  Predicted change in Energy=-5.138442D-07
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -16983,7 +16983,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -17306,12 +17306,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000022     0.000450     YES
  RMS     Force            0.000006     0.000300     YES
- Maximum Displacement     0.736595     0.001800     NO 
- RMS     Displacement     0.180562     0.001200     NO 
+ Maximum Displacement     0.736595     0.001800     NO
+ RMS     Displacement     0.180562     0.001200     NO
  Predicted change in Energy=-5.895231D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -17451,7 +17451,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -17772,12 +17772,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000165     0.000450     YES
  RMS     Force            0.000033     0.000300     YES
- Maximum Displacement     0.719977     0.001800     NO 
- RMS     Displacement     0.172793     0.001200     NO 
+ Maximum Displacement     0.719977     0.001800     NO
+ RMS     Displacement     0.172793     0.001200     NO
  Predicted change in Energy=-1.750574D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -17917,7 +17917,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -18236,12 +18236,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000391     0.000450     YES
  RMS     Force            0.000064     0.000300     YES
- Maximum Displacement     0.115592     0.001800     NO 
- RMS     Displacement     0.026340     0.001200     NO 
+ Maximum Displacement     0.115592     0.001800     NO
+ RMS     Displacement     0.026340     0.001200     NO
  Predicted change in Energy=-3.113808D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -18381,7 +18381,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -18705,12 +18705,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000024     0.000450     YES
  RMS     Force            0.000007     0.000300     YES
- Maximum Displacement     0.692134     0.001800     NO 
- RMS     Displacement     0.171191     0.001200     NO 
+ Maximum Displacement     0.692134     0.001800     NO
+ RMS     Displacement     0.171191     0.001200     NO
  Predicted change in Energy=-1.340837D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -18850,7 +18850,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -19166,12 +19166,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000232     0.000450     YES
  RMS     Force            0.000045     0.000300     YES
- Maximum Displacement     0.964379     0.001800     NO 
- RMS     Displacement     0.240178     0.001200     NO 
+ Maximum Displacement     0.964379     0.001800     NO
+ RMS     Displacement     0.240178     0.001200     NO
  Predicted change in Energy=-1.263449D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -19311,7 +19311,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -19634,12 +19634,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000419     0.000450     YES
  RMS     Force            0.000067     0.000300     YES
- Maximum Displacement     0.367140     0.001800     NO 
- RMS     Displacement     0.093452     0.001200     NO 
+ Maximum Displacement     0.367140     0.001800     NO
+ RMS     Displacement     0.093452     0.001200     NO
  Predicted change in Energy=-7.614536D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -19779,7 +19779,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -20104,12 +20104,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000095     0.000450     YES
  RMS     Force            0.000019     0.000300     YES
- Maximum Displacement     0.669633     0.001800     NO 
- RMS     Displacement     0.175821     0.001200     NO 
+ Maximum Displacement     0.669633     0.001800     NO
+ RMS     Displacement     0.175821     0.001200     NO
  Predicted change in Energy=-3.820235D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -20249,7 +20249,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -20565,12 +20565,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000161     0.000450     YES
  RMS     Force            0.000034     0.000300     YES
- Maximum Displacement     0.649573     0.001800     NO 
- RMS     Displacement     0.170349     0.001200     NO 
+ Maximum Displacement     0.649573     0.001800     NO
+ RMS     Displacement     0.170349     0.001200     NO
  Predicted change in Energy=-1.978358D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -20710,7 +20710,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -21028,12 +21028,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.689250     0.001800     NO 
- RMS     Displacement     0.180352     0.001200     NO 
+ Maximum Displacement     0.689250     0.001800     NO
+ RMS     Displacement     0.180352     0.001200     NO
  Predicted change in Energy=-7.084652D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -21173,7 +21173,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -21489,12 +21489,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000178     0.000450     YES
  RMS     Force            0.000039     0.000300     YES
- Maximum Displacement     0.688953     0.001800     NO 
- RMS     Displacement     0.180277     0.001200     NO 
+ Maximum Displacement     0.688953     0.001800     NO
+ RMS     Displacement     0.180277     0.001200     NO
  Predicted change in Energy=-1.974149D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -21634,7 +21634,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -21952,12 +21952,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691306     0.001800     NO 
- RMS     Displacement     0.180865     0.001200     NO 
+ Maximum Displacement     0.691306     0.001800     NO
+ RMS     Displacement     0.180865     0.001200     NO
  Predicted change in Energy=-7.156260D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -22097,7 +22097,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -22413,12 +22413,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691300     0.001800     NO 
- RMS     Displacement     0.180865     0.001200     NO 
+ Maximum Displacement     0.691300     0.001800     NO
+ RMS     Displacement     0.180865     0.001200     NO
  Predicted change in Energy=-1.975355D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -22558,7 +22558,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -22876,12 +22876,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691425     0.001800     NO 
- RMS     Displacement     0.180895     0.001200     NO 
+ Maximum Displacement     0.691425     0.001800     NO
+ RMS     Displacement     0.180895     0.001200     NO
  Predicted change in Energy=-7.158376D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -23021,7 +23021,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -23337,12 +23337,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691421     0.001800     NO 
- RMS     Displacement     0.180895     0.001200     NO 
+ Maximum Displacement     0.691421     0.001800     NO
+ RMS     Displacement     0.180895     0.001200     NO
  Predicted change in Energy=-1.975421D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -23482,7 +23482,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -23800,12 +23800,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691432     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691432     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158405D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -23945,7 +23945,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -24261,12 +24261,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691427     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691427     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975421D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -24406,7 +24406,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -24724,12 +24724,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691432     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691432     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158408D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -24869,7 +24869,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -25185,12 +25185,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691427     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691427     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975423D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -25330,7 +25330,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -25648,12 +25648,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691432     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691432     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158408D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -25793,7 +25793,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -26109,12 +26109,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691427     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691427     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -26254,7 +26254,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -26572,12 +26572,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691433     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691433     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158411D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -26717,7 +26717,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -27033,12 +27033,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691428     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691428     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -27178,7 +27178,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -27496,12 +27496,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691433     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691433     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158412D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -27641,7 +27641,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -27957,12 +27957,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691428     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691428     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975423D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -28102,7 +28102,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -28420,12 +28420,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691433     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691433     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158409D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -28565,7 +28565,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -28882,12 +28882,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691428     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691428     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975421D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -29027,7 +29027,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -29346,12 +29346,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691433     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691433     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158424D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -29491,7 +29491,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -29808,12 +29808,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691428     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691428     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975423D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -29953,7 +29953,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -30272,12 +30272,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691434     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691434     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158412D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -30417,7 +30417,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -30734,12 +30734,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691429     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691429     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -30879,7 +30879,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -31198,12 +31198,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691434     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691434     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158411D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -31343,7 +31343,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -31660,12 +31660,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691429     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691429     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -31805,7 +31805,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -32124,12 +32124,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691434     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691434     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158425D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -32269,7 +32269,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -32586,12 +32586,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691429     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691429     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -32731,7 +32731,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -33050,12 +33050,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691434     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691434     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158409D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -33195,7 +33195,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -33512,12 +33512,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691429     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691429     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -33657,7 +33657,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -33976,12 +33976,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691435     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691435     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158427D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -34121,7 +34121,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -34438,12 +34438,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691430     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691430     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975421D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -34583,7 +34583,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -34902,12 +34902,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691435     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691435     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158411D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -35047,7 +35047,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -35364,12 +35364,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691430     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691430     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -35509,7 +35509,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -35828,12 +35828,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691435     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691435     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158413D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -35973,7 +35973,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -36290,12 +36290,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691430     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691430     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975423D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -36435,7 +36435,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -36754,12 +36754,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691435     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691435     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158409D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -36899,7 +36899,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -37216,12 +37216,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691430     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691430     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975422D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -37361,7 +37361,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -37680,12 +37680,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000003     0.000450     YES
  RMS     Force            0.000001     0.000300     YES
- Maximum Displacement     0.691436     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691436     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-7.158408D-06
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -37825,7 +37825,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -38143,12 +38143,12 @@
          Item               Value     Threshold  Converged?
  Maximum Force            0.000179     0.000450     YES
  RMS     Force            0.000040     0.000300     YES
- Maximum Displacement     0.691431     0.001800     NO 
- RMS     Displacement     0.180896     0.001200     NO 
+ Maximum Displacement     0.691431     0.001800     NO
+ RMS     Displacement     0.180896     0.001200     NO
  Predicted change in Energy=-1.975421D-05
  GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
 
-                          Input orientation:                          
+                          Input orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
@@ -38288,7 +38288,7 @@
  Full point group                 C1      NOp   1
  Largest Abelian subgroup         C1      NOp   1
  Largest concise Abelian subgroup C1      NOp   1
-                         Standard orientation:                         
+                         Standard orientation:
  ---------------------------------------------------------------------
  Center     Atomic      Atomic             Coordinates (Angstroms)
  Number     Number       Type             X           Y           Z
