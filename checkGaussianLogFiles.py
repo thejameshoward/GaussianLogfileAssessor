@@ -274,98 +274,130 @@ def has_frequency_section(text: str) -> bool:
     return bool(re.search(FREQ_START_PATTERN, text))
 
 def print_line_by_line_analysis(file: Path, text: str):
+    '''
+    Prints a line-by-line analysis of a G16 log file including
+    link entries, internal job steps, normal terminations,
+    and some errors.
 
-    # For printing headers
+    Parameters
+    ----------
+    file : Path
+        Path to the Gaussian 16 log file being analyzed.
+    text : str
+        Full contents of the log file as a single string.
+
+    Returns
+    -------
+    None
+    '''
+    # Print centered file header
     len_file_name = len(file.name)
     spacer = (80 - len_file_name) / 2
-    print('-'* math.ceil(spacer) + file.name + '-'* math.floor(spacer))
+    print('-' * math.ceil(spacer) + file.name + '-' * math.floor(spacer))
 
-    # Print the debug information
     lines = text.split('\n')
-
     print(f'\tNumber of link statements\t\t{get_n_links(text)}')
     print(f'\tNumber of termination statements:\t{get_n_normal_terminations(text)}\n')
 
     print('\tLine-by-line analysis:')
     for i, line in enumerate(lines):
-        if re.match(LINK_PATTERN, line) is not None:
-            print(f'\t\tENTER LINK\t\t\t{i+1}')
-
-        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            print(f'\t\tINTERNAL JOB\t\t\t{i+1}')
-
+        lineno = i + 1
+        if re.match(LINK_PATTERN, line):
+            print(f'\t\tENTER LINK\t\t\t{lineno}')
+        elif re.match(PROCEDING_JOB_STEP_PATTERN, line):
+            print(f'\t\tINTERNAL JOB\t\t\t{lineno}')
         elif ' Normal termination of Gaussian 16' in line:
-            print(f'\t\tNORM TERM\t\t\t{i+1}')
-
+            print(f'\t\tNORM TERM\t\t\t{lineno}')
         elif 'FileIO operation on non-existent file' in line:
-            print(f'\t\tFileIO Error (non-existent)\t{i+1}')
-
+            print(f'\t\tFileIO Error (non-existent)\t{lineno}')
         elif 'Erroneous write.' in line:
-            print(f'\t\tERRONEOUS WRITE\t\t\t{i+1}')
-
-        else:
-            pass
+            print(f'\t\tERRONEOUS WRITE\t\t\t{lineno}')
 
     print('\n')
 
-def _is_logfile_complete(split_text: list[str]) -> bool:
-    if split_text == ['']:
-        return False
-
-    if 'Normal termination of Gaussian 16' in split_text[-1] or 'Normal termination of Gaussian 16' in split_text[-2]:
-        return True
-
-    return False
-
 def get_slurm_out_file(file: Path) -> Path | None:
+    '''
+    Identifies the SLURM output file corresponding to a given job file.
+
+    Parameters
+    ----------
+    file : Path
+        Path to the SLURM job submission file.
+
+    Returns
+    -------
+    Path or None
+        The matched SLURM error file if exactly one match is found;
+        otherwise, None.
+    '''
     files = [x for x in file.parent.glob('*out*') if file.stem in x.name]
 
-    if files == []:
-        return None
-
-    # Check if only one output file exists
     if len(files) != 1:
-        print(f'{bcolors.FAIL}WARNING: Multiple SLURM output files identified for {file.name}.{bcolors.ENDC}')
+        return None
 
     return files[0]
 
 def get_slurm_error_file(file: Path) -> Path | None:
     '''
-    Finds an error file that contains the file stem.
-    Returns None if exactly 1 file was not found.
+    Identifies the SLURM error file corresponding to a given job file
+    by matching the file stem in the filename.
+
+    Parameters
+    ----------
+    file : Path
+        Path to the SLURM job submission file.
+
+    Returns
+    -------
+    Path or None
+        The matched SLURM error file if exactly one match is found;
+        otherwise, None.
     '''
     files = [x for x in file.parent.glob('*error*') if file.stem in x.name]
 
-    # Return None if there is not exactly 1 file
     if len(files) != 1:
         return None
 
     return files[0]
 
-def job_preempted(file: Path) -> bool:
-    slurm_out = get_slurm_error_file(file)
+def job_preempted(slurm_error_file: Path) -> bool:
+    '''
+    Checks whether a SLURM job was preempted based on the last line
+    of the associated SLURM error file.
 
-    if slurm_out is None:
-        return False
+    Parameters
+    ----------
+    slurm_error_file : Path
+        Path to the SLURM error file.
 
-    with open(slurm_out, 'r') as infile:
+    Returns
+    -------
+    bool
+        True if the last line contains 'PREEMPTION'; False otherwise.
+    '''
+    with open(slurm_error_file, 'r', encoding='utf-8') as infile:
         lines = infile.readlines()
 
     if 'PREEMPTION' in lines[-1]:
         return True
     return False
 
-def slurm_oom_kill(file: Path) -> bool:
+def slurm_oom_kill(slurm_error_file: Path) -> bool:
     '''
-    Gets the slurm .error file and determines if oom_kill event
-    was found in its contents
+    Checks whether a SLURM job was terminated due to an out-of-memory (OOM)
+    event by searching for 'oom_kill' in the last line of the SLURM error file.
+
+    Parameters
+    ----------
+    slurm_error_file : Path
+        Path to the SLURM error file.
+
+    Returns
+    -------
+    bool
+        True if 'oom_kill' is found in the last line; False otherwise.
     '''
-    slurm_out = get_slurm_error_file(file)
-
-    if slurm_out is None:
-        return False
-
-    with open(slurm_out, 'r') as infile:
+    with open(slurm_error_file, 'r') as infile:
         lines = infile.readlines()
 
     if 'oom_kill' in lines[-1]:
@@ -373,37 +405,27 @@ def slurm_oom_kill(file: Path) -> bool:
 
     return False
 
-def job_cancelled(file: Path) -> bool:
-    slurm_out = get_slurm_error_file(file)
+def job_cancelled(slurm_error_file: Path) -> bool:
+    '''
+    Checks whether a SLURM job was cancelled by inspecting the last line
+    of the SLURM error file.
 
-    if slurm_out is None:
-        return False
+    Parameters
+    ----------
+    slurm_error_file : Path
+        Path to the SLURM error file.
 
-    with open(slurm_out, 'r') as infile:
+    Returns
+    -------
+    bool
+        True if the last line contains 'CANCELLED'; False otherwise.
+    '''
+    with open(slurm_error_file, 'r') as infile:
         lines = infile.readlines()
 
     if 'CANCELLED' in lines[-1]:
         return True
     return False
-
-def get_slurm_job_id_from_log_file(text: str) -> int:
-
-    SCRDIR_PATTERN = re.compile(r'(?<=scrdir=\")(.*?)(?=\")', re.DOTALL)
-    match = re.search(SCRDIR_PATTERN, text)
-
-    if match is None:
-        print(f'Could not find slurm job ID!')
-        return None
-
-    match = Path(match[0].strip())
-
-    # Assume the job_id is in the last part of the path
-    match = match.parts[-1]
-
-    try:
-        match = int(''.join([x for x in str(match) if x.isdigit()]))
-    except ValueError as e:
-        pass
 
 def get_logfiles(parent_dir: Path) -> list[Path]:
     '''
@@ -425,15 +447,42 @@ def get_logfiles(parent_dir: Path) -> list[Path]:
     return files
 
 def has_atomic_number_out_of_basis_set(split_text: list[str]) -> tuple[bool, str] | tuple[bool, None]:
-    lines = [x for x in split_text if 'Atomic number out of range for' in x]
-    if len(lines) != 0:
-        return True, lines[0].strip()
+    '''
+    Checks whether any line in the input text indicates an atomic number
+    outside the supported range of the basis set.
+
+    Parameters
+    ----------
+    split_text: list of str
+        Lines of text
+
+    Returns
+    -------
+    tuple of bool and Optional[str]
+        - True and the first offending line if such a message is found.
+        - False and None otherwise.
+    '''
+    for line in split_text:
+        if 'Atomic number out of range for' in line:
+            return True, line.strip()
     return False, None
 
 def has_illegal_multiplicity(text: str) -> tuple[bool, str] | tuple[bool, None]:
     '''
+    Checks for an illegal spin multiplicity message in G16 output text.
+
+    Parameters
+    ----------
+    text : str
+        Full contents of a Gaussian .log file.
+
+    Returns
+    -------
+    tuple of bool and Optional[str]
+        - True and the matched error message if found.
+        - False and None otherwise.
     '''
-    match = re.search(ILLEGAL_MULTIPLICITY, text)  # Use search instead of match
+    match = re.search(ILLEGAL_MULTIPLICITY, text)
     if match:
         return True, re.sub(r'\s+', ' ', match.group(0))
     return False, None
@@ -528,73 +577,77 @@ def check_oscillating_optimization_criteria(text: str,
 def evaluate_g16_logfile(file: Path,
                          window: int,
                          tolerance: float,
-                         check_oscillation: bool = True) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
+                         line_by_line: bool = False,
+                         check_oscillation: bool = True) -> tuple[bool, list]:
     '''
     Evaluates a Gaussian16 log file to determine whether it completed successfully,
     encountered an error, or terminated abnormally.
 
     Parameters
-    ----------show
+    ----------
     file : Path
         Path to the Gaussian16 .log file to be analyzed.
 
     Returns
     ----------
-    tuple[Path, None, str]
-        If the logfile completed successfully, returns the file path and its text.
-
-    tuple[Path, str, str]
-        If the logfile encountered an error, returns the file path, an error message,
-        and the file text.
-
-    tuple[Path, None, None]
-        If the logfile is incomplete or running, returns the file path and None values.
+    tuple[bool, Path, str]
+        Returns whether or not the logfile terminated successfully, the Path to the logfile,
+        and a reason the logfile failed (empty string if it was successful)
     '''
-    is_oscillating = False
 
+    # Make a list for the reason(s) the logfile failed
+    failure_reasons = []
+
+    # Get the file text
     try:
         text = get_file_text(file)
     except UnicodeDecodeError:
-        return file, 'UNICODE DECODE ERROR. CHECK FILE MANUALLY', None
+        return False, ['UNICODE DECODE ERROR. CHECK FILE MANUALLY']
+
+    # Print line-by-line
+    if line_by_line:
+        print_line_by_line_analysis(file=file, text=text)
 
     split_text = text.split('\n')
 
+    # Get the slurm error file (if it exists)
+    slurm_error_file = get_slurm_error_file(file=file)
+
     # Check for PREEMPTION
-    if job_preempted(file):
-        return file, 'was PREEMPTED', text
+    if slurm_error_file is not None:
+        if job_preempted(slurm_error_file):
+            failure_reasons.append('preempted')
 
-    # Check for oom_kill
-    if slurm_oom_kill(file):
-        return file, 'of an oom_kill event', text
+        if slurm_oom_kill(slurm_error_file):
+            failure_reasons.append('oom_kill')
 
-    # Check for CANCELLED
-    if job_cancelled(file):
-        return file, 'was CANCELLED by user', text
+        if job_cancelled(slurm_error_file):
+            failure_reasons.append('cancelled')
 
     # TODO this line is essentially ignored if a "failure" is detected by later logic
     #if not _is_logfile_complete(split_text):
     #    return file, 'is not a complete logfile. Is the job running?'
 
-    # Get the lines at which jobs start
-    # and normal termination lines appear
+    # Get the lines at which jobs start and normal termination lines appear
     job_lines = get_job_start_line_numbers(split_text=split_text)
     term_lines = get_termination_line_numbers(split_text=split_text)
     error_lines = get_job_error_line_numbers(text)
 
+    # Check if the atomic number was out of range
     atomic_number_out_of_range, out_of_range_line = has_atomic_number_out_of_basis_set(split_text=split_text)
     if atomic_number_out_of_range:
-        return file, f'failed because {out_of_range_line}', text
+        failure_reasons.append(out_of_range_line)
 
+    # Check if the multiplicity was impossible
     illegal_mult, illegal_mult_line = has_illegal_multiplicity(text=text)
     if illegal_mult:
-        return file, f'{illegal_mult_line}', text
+        failure_reasons.append(illegal_mult_line)
 
-    # Check if there is a freq section before
-    # parsing the lowest frequency
+    # Confirm presence of freq section before parsing the lowest frequency
     if has_frequency_section(text):
         lowest_freq_is_negative, lowest_freq_value = has_imaginary_frequency(text)
         if lowest_freq_is_negative:
-            return file, f'has an imaginary frequency at {round(lowest_freq_value, 4)}', text
+            failure_reasons.append(f'imaginary freq {lowest_freq_value}')
 
     # Check for oscillation
     if check_oscillation:
@@ -605,42 +658,42 @@ def evaluate_g16_logfile(file: Path,
                                                                                     window=window,
                                                                                     tolerance=tolerance)
 
-        #if is_oscillating:
-        #    return file, oscillation_reason, text
+        if is_oscillating:
+            failure_reasons.append(oscillation_reason)
 
     # If a specific error can be identified
     # use the text of the line as the "reason"
     if len(error_lines) != 0:
-        return file, '\t'.join([split_text[i].strip() + f' (line {i})' for i in error_lines]), text
+        failure_reasons.append('\t'.join([split_text[i].strip() + f' (line {i})' for i in error_lines]))
 
     # Iterate over the lines that indicate a job started
     for i, job_start in enumerate(job_lines):
-
         # Check if a termination line proceeded the job start line
         # This indicates a failed job
         try:
             if job_start > term_lines[i]:
-
-                # If we checked oscillation and it is oscillating, return specifics
-                if check_oscillation:
-                    if is_oscillating:
-                        return file, oscillation_reason, text
-                    else:
-                        return file, f'job on line {job_start + 1} failed.', text
-                # Otherwise, return a non specific failure
-                else:
-                    return file, f'job on line {job_start + 1} failed.', text
+                #print(f'job on line {job_start + 1} failed because term_lines[i] was {term_lines[i]}.')
+                failure_reasons.append(f'job on line {job_start + 1} failed.')
+            #else:
+            #    print(f'job on line {job_start + 1} succeeded because term_lines[i] was {term_lines[i]}.')
         except IndexError:
+            failure_reasons.append(f'job on line {job_start + 1} failed.')
 
-            if check_oscillation:
-                if is_oscillating:
-                    return file, oscillation_reason, text
-                else:
-                    return file, f'job on line {job_start + 1} failed.', text
-            else:
-                return file, f'job on line {job_start + 1} failed.', text
+    # Special case where oscillation is detected but
+    # the optimizer eventually reached a minimum
+    # This must go before filtering for specific reasons
+    if len(failure_reasons) == 1:
+        if 'is oscillating' in failure_reasons[0]:
+            failure_reasons = []
 
-    return file, None, text
+    # Filter out generic reasons if we have a specific reason
+    if len(failure_reasons) > 1:
+        failure_reasons = [x for x in failure_reasons if 'job on line' not in x]
+
+    if len(failure_reasons) == 0:
+        return True, failure_reasons
+
+    return False, failure_reasons
 
 def print_analysis_and_move_files(failed: dict,
                                   completed: list[Path],
@@ -798,6 +851,9 @@ def print_summary(failed: dict,
     print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
     print('\n')
 
+    for _ in completed:
+        print(f'{bcolors.BOLD}{_.name}{bcolors.ENDC}')
+
 def main(args) -> None:
     '''
     Main function for running the script.
@@ -832,26 +888,26 @@ def main(args) -> None:
             results = p.starmap(evaluate_g16_logfile, zip(files,
                                                           itertools.repeat(args.window),
                                                           itertools.repeat(args.tolerance),
+                                                          itertools.repeat(False),
                                                           itertools.repeat(args.no_oscillation_criteria)))
-            completed = [x[0] for x in results if x[1] is None]
-            failed = {x[0]: x[1] for x in results if x[1] is not None}
+
+            completed = [files[i] for i, x in enumerate(results) if x[0]]
+            failed = {files[i]: '\t'.join(x[1]) for i, x in enumerate(results) if x[0] is False}
     else:
         for file in files:
 
-            file, logfile_assessment, file_text = evaluate_g16_logfile(file,
-                                                                       window=args.window,
-                                                                       tolerance=args.tolerance,
-                                                                       check_oscillation=args.no_oscillation_criteria)
-            if args.line_by_line:
-                if file_text is None:
-                    print(f'Could not perform line-by-line analysis because {logfile_assessment}')
-                else:
-                    print_line_by_line_analysis(file, file_text)
+            is_complete, reasons = evaluate_g16_logfile(file,
+                                                        window=args.window,
+                                                        tolerance=args.tolerance,
+                                                        line_by_line=args.line_by_line,
+                                                        check_oscillation=args.no_oscillation_criteria)
 
-            if logfile_assessment is None and file not in failed.keys():
+
+
+            if is_complete and file not in failed.keys():
                 completed.append(file)
             else:
-                failed[file] = logfile_assessment
+                failed[file] = '\t'.join(reasons)
 
     print_summary(failed,
                   completed=completed,
