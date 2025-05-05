@@ -678,8 +678,7 @@ def evaluate_g16_logfile(file: Path,
             #    print(f'job on line {job_start + 1} succeeded because term_lines[i] was {term_lines[i]}.')
         except IndexError:
             failure_reasons.append(f'job on line {job_start + 1} failed.')
-    #print(failure_reasons)
-    #exit()
+
     # Special case where oscillation is detected but
     # the optimizer eventually reached a minimum
     # This must go before filtering for specific reasons
@@ -688,8 +687,8 @@ def evaluate_g16_logfile(file: Path,
             failure_reasons = []
 
     # Filter out generic reasons if we have a specific reason
-    #if len(failure_reasons) > 1:
-    #    failure_reasons = [x for x in failure_reasons if 'job on line' not in x]
+    if len(failure_reasons) > 1:
+        failure_reasons = [x for x in failure_reasons if 'job on line' not in x]
 
     if len(failure_reasons) == 0:
         return True, failure_reasons
@@ -852,8 +851,8 @@ def print_summary(failed: dict,
     print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
     print('\n')
 
-    #for _ in completed:
-    #    print(f'{bcolors.BOLD}{_.name}{bcolors.ENDC}')
+    for _ in completed:
+        print(f'{bcolors.BOLD}{_.name}{bcolors.ENDC}')
 
 def main(args) -> None:
     '''
