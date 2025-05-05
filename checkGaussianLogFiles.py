@@ -678,8 +678,7 @@ def evaluate_g16_logfile(file: Path,
             #    print(f'job on line {job_start + 1} succeeded because term_lines[i] was {term_lines[i]}.')
         except IndexError:
             failure_reasons.append(f'job on line {job_start + 1} failed.')
-    #print(failure_reasons)
-    #exit()
+
     # Special case where oscillation is detected but
     # the optimizer eventually reached a minimum
     # This must go before filtering for specific reasons
