@@ -11,6 +11,7 @@ import re
 import time
 import math
 import shutil
+import logging
 import argparse
 import itertools
 import multiprocessing
@@ -514,10 +515,17 @@ def get_optimization_data(text: str) -> tuple[list[float], list[float], list[flo
     max_displacement_matches = re.findall(MAX_DISPLACEMENT_PATTERN, text)
     rms_displacement_matches = re.findall(RMS_DISPLACEMENT_PATTERN, text)
 
-    max_force_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  max_force_matches]
-    rms_force_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  rms_force_matches]
-    max_displacement_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  max_displacement_matches]
-    rms_displacement_matches = [float(re.sub(r'\s+', ' ', x).strip().split(' ')[0]) for x in  rms_displacement_matches]
+    max_force_matches = [re.sub(r'\s+', ' ', x).strip().split(' ')[0] for x in  max_force_matches]
+    rms_force_matches = [re.sub(r'\s+', ' ', x).strip().split(' ')[0] for x in  rms_force_matches]
+    max_displacement_matches = [re.sub(r'\s+', ' ', x).strip().split(' ')[0] for x in  max_displacement_matches]
+    rms_displacement_matches = [re.sub(r'\s+', ' ', x).strip().split(' ')[0] for x in  rms_displacement_matches]
+
+    # Convert all to floats if there are no asterisks which
+    # might indicate a bad step from the optimizer
+    max_force_matches = [float(x) for x in max_force_matches if '*' not in x]
+    rms_force_matches = [float(x) for x in rms_force_matches if '*' not in x]
+    max_displacement_matches = [float(x) for x in max_displacement_matches if '*' not in x]
+    rms_displacement_matches = [float(x) for x in rms_displacement_matches if '*' not in x]
 
     return max_force_matches, rms_force_matches, max_displacement_matches, rms_displacement_matches
 
@@ -895,6 +903,9 @@ def main(args) -> None:
             failed = {files[i]: '\t'.join(x[1]) for i, x in enumerate(results) if x[0] is False}
     else:
         for file in files:
+
+            if args.debug:
+                print(f'[DEBUG] Working on {file.name}')
 
             is_complete, reasons = evaluate_g16_logfile(file,
                                                         window=args.window,

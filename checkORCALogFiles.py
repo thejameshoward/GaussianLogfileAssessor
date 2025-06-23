@@ -11,11 +11,11 @@ import re
 import time
 import math
 import shutil
+import logging
 import argparse
 import multiprocessing
 
 from pathlib import Path
-
 
 DESCRIPTION = '🦝 Analyzes ORCA 6 log files for common errors 🦝.'
 
