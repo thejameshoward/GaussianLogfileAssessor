@@ -346,7 +346,7 @@ def get_slurm_error_file(file: Path) -> Path | None:
     Parameters
     ----------
     file : Path
-        Path to the SLURM job submission file.
+        Path to the Gaussian16 .log file.
 
     Returns
     -------
@@ -354,7 +354,7 @@ def get_slurm_error_file(file: Path) -> Path | None:
         The matched SLURM error file if exactly one match is found;
         otherwise, None.
     '''
-    files = [x for x in file.parent.glob('*error*') if file.stem in x.name]
+    files = [x for x in file.parent.glob(f'{file.stem}.*error')]
 
     if len(files) != 1:
         return None
