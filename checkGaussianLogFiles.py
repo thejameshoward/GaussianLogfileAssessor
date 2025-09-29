@@ -26,6 +26,7 @@ NORM_TERM_PATTERN = re.compile(r' Normal termination of Gaussian 16', re.DOTALL)
 PROCEDING_JOB_STEP_PATTERN = re.compile(r'\s+Link1:\s+Proceeding to internal job step number\s+', re.DOTALL)
 FILEIO_ERROR_NON_EXISTENT_FILE = re.compile(r'\s+FileIO operation on non-existent file', re.DOTALL)
 ILLEGAL_MULTIPLICITY = re.compile(r'The combination of multiplicity\s+\d+\s+and\s+\d+\s+electrons is impossible', re.DOTALL)
+CONVERGENCE_FAILURE = re.compile(r'Convergence failure -- run terminated\.', re.DOTALL)
 ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
 FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
 N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep= \d+')
@@ -582,6 +583,26 @@ def check_oscillating_optimization_criteria(text: str,
 
     return False, None
 
+def has_convergence_error(text: str) -> tuple[bool, str] | tuple[bool, None]:
+    '''
+    Checks for an convergence failure message in G16 output text.
+
+    Parameters
+    ----------
+    text : str
+        Full contents of a Gaussian .log file.
+
+    Returns
+    -------
+    tuple of bool and Optional[str]
+        - True and the matched error message if found.
+        - False and None otherwise.
+    '''
+    match = re.search(CONVERGENCE_FAILURE, text)
+    if match:
+        return True, re.sub(r'\s+', ' ', match.group(0))
+    return False, None
+
 def evaluate_g16_logfile(file: Path,
                          window: int,
                          tolerance: float,
@@ -645,6 +666,11 @@ def evaluate_g16_logfile(file: Path,
     atomic_number_out_of_range, out_of_range_line = has_atomic_number_out_of_basis_set(split_text=split_text)
     if atomic_number_out_of_range:
         failure_reasons.append(out_of_range_line)
+
+    # Check if there was a convergence failure
+    convergence_error, convergence_error_line = has_convergence_error(text=text)
+    if convergence_error:
+        failure_reasons.append(convergence_error_line)
 
     # Check if the multiplicity was impossible
     illegal_mult, illegal_mult_line = has_illegal_multiplicity(text=text)
