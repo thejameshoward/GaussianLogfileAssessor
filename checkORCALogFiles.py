@@ -8,14 +8,18 @@ Analyzes Gaussian .log files
 from __future__ import annotations
 
 import re
+import sys
 import time
 import math
 import shutil
 import logging
 import argparse
+import itertools
 import multiprocessing
 
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 DESCRIPTION = '🦝 Analyzes ORCA 6 log files for common errors 🦝.'
 
@@ -42,15 +46,8 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('-i', '--input',
                         dest='input',
-                        help='Directory/file to analyze. (default=cwd)\n\n')
-
-    parser.add_argument('--debug',
-                        action='store_true',
-                        help='Debug information\n\n')
-
-    parser.add_argument('--line-by-line',
-                        action='store_true',
-                        help='Requests printing of line-by-line analysis of each file\n\n')
+                        help='Directory or file to analyze. (default=cwd)\n\n',
+                        metavar='')
 
     parser.add_argument('--dry',
                         action='store_true',
@@ -58,25 +55,37 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument('-p', '--parallel',
                         action='store_true',
-                        help='Uses multiprocessing to rapidly analyze files.\n\n')
+                        help='Uses multiprocessing to analyze files\n\n')
 
-    parser.add_argument('--deletechk',
+    parser.add_argument('--deletegbw',
                         action='store_true',
-                        help='Deletes ALL large .chk files that have a corresponding log instead of moving them.\n\n')
+                        help='Deletes all .gbw files that have a corresponding completed .out file\n\n')
 
     parser.add_argument('-t', '--tolerance',
                         dest='tolerance',
                         required=False,
-                        default='1e-3',
-                        help='Sets the tolerance value for determining oscillating optimizations.\n\n')
+                        type=float,
+                        default='1e-5',
+                        help='Sets the tolerance value for determining oscillating optimizations (default=1e-5).\n\n',
+                        metavar='')
+
+    parser.add_argument('-w', '--window',
+                        dest='window',
+                        required=False,
+                        type=int,
+                        default=10,
+                        help='Number of optimization steps to look at when evaluating oscillations (default=10).\n\n',
+                        metavar='')
+
+    parser.add_argument('--no-oscillation-criteria',
+                        action='store_false',
+                        help='Disables detection of oscillations to increase assessment speed.\nOscillations appear as ambiguous failed jobs\n\n')
+
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help='Print debug information\n\n')
 
     args = parser.parse_args()
-
-    if args.parallel and args.line_by_line:
-        raise NotImplementedError('Cannot perform line-by-line analysis in parallel.')
-
-    if args.deletechk:
-        raise ValueError('--deletechk is not available for ORCA6LogAssesor')
 
     return args
 
@@ -86,14 +95,15 @@ def set_single_proc_affinity():
 
     Limits script execution to the first available core, ensuring
     that the script runs on a single processor. If the `psutil` module is
-    not installed, a warning is printed, and no restriction is applied.
+    not installed, or if the platform does not support CPU affinity,
+    a warning is printed and no restriction is applied.
 
     Parameters
     ----------
     None
 
     Returns
-    ----------
+    -------
     None
     '''
     try:
@@ -101,8 +111,10 @@ def set_single_proc_affinity():
         proc = psutil.Process()
         proc.cpu_affinity([proc.cpu_affinity()[0]])
     except ModuleNotFoundError:
-        print(f'[WARNING] psutil module was not found. Running on multiple cores!')
-        pass
+        logger.warning('psutil module was not found. Running on multiple cores!')
+    except AttributeError:
+        logger.warning('CPU affinity is not supported on this platform (e.g. macOS). Running on multiple cores!')
+
 
 def get_file_text(file: Path) -> str:
     '''
@@ -130,15 +142,6 @@ def get_file_text(file: Path) -> str:
         return infile.read()
 
 
-def _is_logfile_complete(split_text: list[str]) -> bool:
-    if split_text == ['']:
-        return False
-
-    if '****ORCA TERMINATED NORMALLY****' in split_text[-2] or '****ORCA TERMINATED NORMALLY****' in split_text[-3]:
-        return True
-
-    return False
-
 def get_orca_out_files(parent_dir: Path) -> list[Path]:
     '''
     Given a directory (parent_dir), gets all the ORCA6 .out files
@@ -158,7 +161,74 @@ def get_orca_out_files(parent_dir: Path) -> list[Path]:
 
     return files
 
-def evaluate_orca_out_file(file: Path) -> tuple[Path, None, str] | tuple[Path, str, str] | tuple[Path, None, None]:
+def get_slurm_error_file(file: Path) -> Path | None:
+    '''
+    Identifies the SLURM error file corresponding to a given job file
+    by matching the file stem in the filename.
+
+    Parameters
+    ----------
+    file : Path
+        Path to the Gaussian16 .log file.
+
+    Returns
+    -------
+    Path or None
+        The matched SLURM error file if exactly one match is found;
+        otherwise, None.
+    '''
+
+    files = [x for x in file.parent.glob(f'{file.stem}*.*error')]
+
+    if len(files) != 1:
+        return None
+
+    return files[0]
+
+def check_slurm_failure(slurm_error_file: Path) -> str | None:
+    '''
+    Checks whether a SLURM job was preempted based on the last line
+    of the associated SLURM error file.
+
+    Parameters
+    ----------
+    slurm_error_file : Path
+        Path to the SLURM error file.
+
+    Returns
+    -------
+    bool
+        True if the last line contains 'PREEMPTION'; False otherwise.
+    '''
+    with open(slurm_error_file, 'r', encoding='utf-8') as infile:
+        text = infile.read()
+
+    if 'PREEMPTION' in text:
+        return 'preempted'
+    elif 'oom_kill' in text:
+        return 'oom_kill'
+    elif 'DUE TO TIME LIMIT' in text:
+        return 'wall time exceeded'
+    elif 'CANCELLED' in text:
+        return 'cancelled'
+    else:
+        return None
+
+
+def _is_logfile_complete(split_text: list[str]) -> bool:
+    if split_text == ['']:
+        return False
+
+    if '****ORCA TERMINATED NORMALLY****' in split_text[-2] or '****ORCA TERMINATED NORMALLY****' in split_text[-3]:
+        return True
+
+    return False
+
+
+def evaluate_orca_out_file(file: Path,
+                           window: int,
+                           tolerance: float,
+                           check_oscillation: bool = True) -> tuple[bool, list]:
     '''
     Evaluates an ORCA6 out file to determine whether it completed successfully,
     encountered an error, or terminated abnormally.
@@ -180,6 +250,9 @@ def evaluate_orca_out_file(file: Path) -> tuple[Path, None, str] | tuple[Path, s
     tuple[Path, None, None]
         If the .out is incomplete or running, returns the file path and None values.
     '''
+    # Make a list for the reason(s) the logfile failed
+    failure_reasons = []
+
     try:
         text = get_file_text(file)
     except UnicodeDecodeError:
@@ -187,22 +260,30 @@ def evaluate_orca_out_file(file: Path) -> tuple[Path, None, str] | tuple[Path, s
 
     split_text = text.split('\n')
 
+    # Get the slurm error file (if it exists)
+    slurm_error_file = get_slurm_error_file(file=file)
+
+    # Check for SLURM level errors
+    if slurm_error_file is not None:
+        _slurm_failure_reason = check_slurm_failure(slurm_error_file)
+        if _slurm_failure_reason is not None:
+            failure_reasons.append(_slurm_failure_reason)
+
     # Check for libxc error
     if 'Error: Invalid or unknown value for Exchange in DFT XC-Kernel. Please try using LIBXC instead!' in text:
-        return file, 'Invalid/unknown value for Exchange in DFT XC-Kernel. Use LIBXC(<functional>)', text
+        failure_reasons.append('Invalid/unknown value for Exchange in DFT XC-Kernel. Use LIBXC(<functional>)')
 
     # Check for failed geometry optimization error
     if len(re.findall(INCOMPLETE_GEOM_OPT_PATTERN, text)) != 0:
-        return file, 'incomplete geometry optimization', text
+        failure_reasons.append('incomplete geometry optimization')
 
     zero_distance_errors = re.findall(ZERO_DISTANCE_ERROR_PATTERN, text)
     if zero_distance_errors:
-        return file, str(zero_distance_errors[0]), text
+        failure_reasons.append(zero_distance_errors[0])
 
     multiplicity_errors = re.findall(MULTIPLICITY_ERROR_PATTERN, text)
     if multiplicity_errors:
-        return file, str(multiplicity_errors[0]), text
-
+        failure_reasons.append(multiplicity_errors[0])
 
     # Check for this warning
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -211,17 +292,106 @@ def evaluate_orca_out_file(file: Path) -> tuple[Path, None, str] | tuple[Path, s
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if not _is_logfile_complete(split_text=split_text):
-        return file, 'is incomplete', text
+        if len(failure_reasons) == 0:
+            failure_reasons.append('is incomplete (generic failure)')
 
-    return file, None, text
+    if len(failure_reasons) == 0:
+        return True, failure_reasons
+
+    return False, failure_reasons
+
+def _collect_files_to_move(file: Path) -> list[Path]:
+    '''
+    Collects all files associated with a given ORCA log file.
+
+    Parameters
+    ----------
+    file: Path
+        Path to the ORCA .log file
+
+    Returns
+    -------
+    files: list[Path]
+        List of all associated files that exist on disk
+    '''
+    _input_file = file.with_suffix('.inp')
+    if not _input_file.exists():
+        _input_file = file.with_suffix('.orcainp')
+
+    exact_files = [
+        file,
+        _input_file,
+        _input_file.parent / f'{_input_file.stem}.slurm',
+    ]
+
+    glob_patterns = [
+        f'{_input_file.stem}*.output',
+        f'{_input_file.stem}*.error',
+        f'{_input_file.stem}*.bibtex',
+        f'{_input_file.stem}*.densitiesinfo',
+        f'{_input_file.stem}*.xyz',
+        f'{_input_file.stem}*.gbw',
+        f'{_input_file.stem}*.densities',
+        f'{_input_file.stem}*.hess',
+    ]
+
+    globbed_files = [
+        match
+        for pattern in glob_patterns
+        for match in _input_file.parent.glob(pattern)
+    ]
+
+    return [f for f in exact_files + globbed_files if f.exists()]
+
+
+def _move_file_group(files: list[Path],
+                     parent_dir: Path,
+                     dest_dir: Path,
+                     color: str,
+                     log_fn,
+                     dry: bool) -> None:
+    '''
+    Logs and optionally moves a list of files to a destination directory.
+
+    Parameters
+    ----------
+    files: list[Path]
+        List of files to move
+
+    parent_dir: Path
+        Source directory from which files are moved
+
+    dest_dir: Path
+        Destination directory to move files into
+
+    color: str
+        Terminal color code to apply to logged filenames
+
+    log_fn: callable
+        Logger method to use (e.g. logger.info or logger.error)
+
+    dry: bool
+        If True, log actions without moving files
+
+    Returns
+    -------
+    None
+    '''
+    for file in files:
+        log_fn('%s%s%s', color, file.name, bcolors.ENDC)
+        if not dry:
+            shutil.move(parent_dir / file.name, dest_dir / file.name)
+
 
 def print_analysis_and_move_files(failed: dict,
                                   completed: list[Path],
                                   files: list[Path],
                                   parent_dir: Path,
-                                  delete_chk: bool = False) -> None:
+                                  delete_gbw: bool = False,
+                                  dry: bool = False) -> None:
     '''
-    Prints a colorful analysis of the processed G16 log files.
+    Prints a colorful analysis of the processed ORCA log files and
+    moves them into completed or failed subdirectories.
 
     Parameters
     ----------
@@ -230,121 +400,47 @@ def print_analysis_and_move_files(failed: dict,
         containing an explanation of what went wrong.
 
     completed: list[Path]
-        List of completed G16 .log files as pathlib.Path objects
+        List of completed ORCA .log files as pathlib.Path objects
 
     files: list[Path]
-        List of all G16 .log files
+        List of all ORCA .log files
 
     parent_dir: Path
         Directory on which the script operated
 
-    delete_chk: bool
-        Whether to delete .chk files instead of moving them
+    delete_gbw: bool
+        Whether to delete .gbw files instead of moving them
+
+    dry: bool
+        If True, log actions without moving or creating directories
 
     Returns
-    ----------
+    -------
     None
     '''
-    if not args.dry:
-        # Make the new folders
-        completed_dir = parent_dir / 'completed'
-        if not completed_dir.exists():
-            completed_dir.mkdir()
-        failed_dir = parent_dir / 'failed'
-        if not failed_dir.exists():
-            failed_dir.mkdir()
+    if not dry:
+        for subdir in ('completed', 'failed'):
+            target = parent_dir / subdir
+            if not target.exists():
+                target.mkdir()
 
-    print('-----------------------FILES MOVED TO COMPLETED DIRECTORY-----------------------')
+    completed_dir = parent_dir / 'completed'
+    failed_dir = parent_dir / 'failed'
+
+    logger.info('-----------------------FILES MOVED TO COMPLETED DIRECTORY-----------------------')
     for file in completed:
+        associated = _collect_files_to_move(file)
+        _move_file_group(associated, parent_dir, completed_dir, bcolors.OKGREEN, logger.info, dry)
 
-        # Define the input file that made the calculation
-        _input_file = file.with_suffix('.inp')
-        if not _input_file.exists():
-            _input_file = file.with_suffix('.orcainp')
-
-        # Define the additional files that we should move
-        files_to_move = [
-            file,
-            _input_file,
-            # Those with .orcainp.extension
-            Path(_input_file.parent / f'{_input_file.name}.bibtex'),
-            Path(_input_file.parent / f'{_input_file.name}.densitiesinfo'),
-            Path(_input_file.parent / f'{_input_file.name}.xyz'),
-            Path(_input_file.parent / f'{_input_file.name}.gbw'),
-            Path(_input_file.parent / f'{_input_file.name}.densities'),
-            Path(_input_file.parent / f'{_input_file.name}.hess'),
-
-            Path(_input_file.parent / f'{_input_file.stem}.slurm'),
-
-            # Those with stem.extension
-            Path(_input_file.parent / f'{_input_file.stem}.bibtex'),
-            Path(_input_file.parent / f'{_input_file.stem}.densitiesinfo'),
-            Path(_input_file.parent / f'{_input_file.stem}.xyz'),
-            Path(_input_file.parent / f'{_input_file.stem}.gbw'),
-            Path(_input_file.parent / f'{_input_file.stem}.densities'),
-            Path(_input_file.parent / f'{_input_file.stem}.hess'),
-        ]
-
-        # Add error/gbw/output files that were likely missed
-        for ext in ['error', 'output', 'gbw']:
-            for _file in _input_file.parent.glob(f'{_input_file.stem}*.{ext}'):
-                files_to_move.append(_file)
-
-        # Move the files
-        for _ in files_to_move:
-            if _.exists():
-                print(f'{bcolors.OKGREEN}{_.name}{bcolors.ENDC}')
-                if not args.dry:
-                    shutil.move(parent_dir / _.name, completed_dir / _.name)
-
-    print('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
+    logger.info('-------------------------FILES MOVED TO FAILED DIRECTORY------------------------')
     for file in failed.keys():
+        associated = _collect_files_to_move(file)
+        _move_file_group(associated, parent_dir, failed_dir, bcolors.FAIL, logger.error, dry)
 
-        # Define the input file that made the calculation
-        _input_file = file.with_suffix('.inp')
-        if not _input_file.exists():
-            _input_file = file.with_suffix('.orcainp')
+    logger.info('TOTAL    :    %d', len(files))
+    logger.info('COMPLETED:    %d (%d of %d)', len(completed), len(completed), len(files))
+    logger.info('FAILED   :    %d (%d of %d)', len(failed), len(failed), len(files))
 
-        # Define the additional files that we should move
-        files_to_move = [
-            file,
-            _input_file,
-            # Those with .orcainp.extension
-            Path(_input_file.parent / f'{_input_file.name}.bibtex'),
-            Path(_input_file.parent / f'{_input_file.name}.densitiesinfo'),
-            Path(_input_file.parent / f'{_input_file.name}.xyz'),
-            Path(_input_file.parent / f'{_input_file.name}.gbw'),
-            Path(_input_file.parent / f'{_input_file.name}.densities'),
-            Path(_input_file.parent / f'{_input_file.name}.hess'),
-
-            Path(_input_file.parent / f'{_input_file.stem}.slurm'),
-
-            # Those with stem.extension
-            Path(_input_file.parent / f'{_input_file.stem}.bibtex'),
-            Path(_input_file.parent / f'{_input_file.stem}.densitiesinfo'),
-            Path(_input_file.parent / f'{_input_file.stem}.xyz'),
-            Path(_input_file.parent / f'{_input_file.stem}.gbw'),
-            Path(_input_file.parent / f'{_input_file.stem}.densities'),
-            Path(_input_file.parent / f'{_input_file.stem}.hess'),
-        ]
-
-        # Add error/gbw/output files that were likely missed
-        for ext in ['error', 'output', 'gbw']:
-            for _file in _input_file.parent.glob(f'{_input_file.stem}*.{ext}'):
-                files_to_move.append(_file)
-
-        # Move the files
-        for _ in files_to_move:
-            if _.exists():
-                print(f'{bcolors.FAIL}{_.name}{bcolors.ENDC}')
-                if not args.dry:
-                    shutil.move(parent_dir / _.name, failed_dir / _.name)
-
-    print('\n')
-    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
-    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
-    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
-    print('\n')
 
 def print_summary(failed: dict,
                   completed: list[Path],
@@ -367,24 +463,34 @@ def print_summary(failed: dict,
         List of all G16 .log files
 
     Returns
-    ----------
+    -------
     None
     '''
-    print('------------------------------------OVERVIEW------------------------------------')
+    logger.info('------------------------------------OVERVIEW------------------------------------')
     if len(failed) != 0:
+        # Pad filenames to the longest name in the failed dict
+        max_len = max(len(file.name) for file in failed)
         for file, reason in failed.items():
-            print(f'{bcolors.FAIL}{file.name}{bcolors.ENDC} failed because {reason}')
+            padded = file.name.ljust(max_len)
+            logger.error('%s%s%s failed because %s', bcolors.FAIL, padded, bcolors.ENDC, reason)
 
-    print('\n')
-    print(f'{bcolors.BOLD}TOTAL{bcolors.ENDC}:\t\t{len(files)}')
-    print(f'{bcolors.BOLD}COMPLETED{bcolors.ENDC}:\t{len(completed)} ({len(completed)} of {len(files)})')
-    print(f'{bcolors.BOLD}FAILED{bcolors.ENDC}:\t\t{len(failed)} ({len(failed)} of {len(files)})')
-    print('\n')
+    logger.info('TOTAL    :    %d', len(files))
+    logger.info('COMPLETED:    %d (%d of %d)', len(completed), len(completed), len(files))
+    logger.info('FAILED   :    %d (%d of %d)', len(failed), len(failed), len(files))
 
-def main(args) -> None:
+def main() -> None:
     '''
     Main function for running the script.
     '''
+    args = get_args()
+
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='[%(levelname)-5s - %(asctime)s] [%(module)s] %(message)s',
+        datefmt='%m/%d/%Y:%H:%M:%S',
+        handlers=[logging.StreamHandler(sys.stdout)]
+    )
+
     # Note the time
     t1 = time.time()
 
@@ -404,33 +510,43 @@ def main(args) -> None:
     # Completed is just a list of Paths
     failed = {}
     completed = []
-    print(f'Analyzing {len(files)} files...')
+    logger.info('Analyzing %d files...', len(files))
 
     if len(files) >= 200:
-        print('This may take a minute.')
+        logger.info('This may take a minute.')
 
     # Iterate through the files
     if args.parallel:
         with multiprocessing.Pool() as p:
-            results = p.map(evaluate_orca_out_file, files)
-            completed = [x[0] for x in results if x[1] is None]
-            failed = {x[0]: x[1] for x in results if x[1] is not None}
+            results = p.starmap(evaluate_orca_out_file, zip(files,
+                                                          itertools.repeat(args.window),
+                                                          itertools.repeat(args.tolerance),
+                                                          itertools.repeat(False),
+                                                          itertools.repeat(args.no_oscillation_criteria)))
+
+            completed = [files[i] for i, x in enumerate(results) if x[0]]
+            failed = {files[i]: '\t'.join(x[1]) for i, x in enumerate(results) if x[0] is False}
     else:
         for file in files:
 
-            file, logfile_assessment, file_text = evaluate_orca_out_file(file)
+            if args.debug:
+                logger.debug('Working on file %s', file.name)
 
-            if args.line_by_line:
-                if file_text is None:
-                    print(f'Could not perform line-by-line analysis because {logfile_assessment}')
-                else:
-                    #print_line_by_line_analysis(file, file_text)
-                    print('LINE BY LINE ANALYSIS IS NOT AVAILABLE')
+            is_complete, reasons = evaluate_orca_out_file(file,
+                                                          window=args.window,
+                                                          tolerance=args.tolerance,
+                                                          check_oscillation=args.no_oscillation_criteria)
 
-            if logfile_assessment is None and file not in failed.keys():
+
+
+            if is_complete and file not in failed.keys():
                 completed.append(file)
             else:
-                failed[file] = logfile_assessment
+                failed[file] = '\t'.join(reasons)
+
+    print_summary(failed,
+                  completed=completed,
+                  files=files)
 
     # Print out the overall analysis
     if not args.dry:
@@ -438,27 +554,10 @@ def main(args) -> None:
                                       completed=completed,
                                       files=files,
                                       parent_dir=parent_dir,
-                                      delete_chk=bool(args.deletechk))
+                                      delete_gbw=bool(args.deletegbw),
+                                      dry=bool(args.dry))
 
-    print_summary(failed,
-                  completed=completed,
-                  files=files)
-
-    print(f'Total analysis time (s): {round(time.time() - t1,2)}')
+    logger.info('Total analysis time (s): %.2f', round(time.time() - t1,2))
 
 if __name__ == "__main__":
-    args = get_args()
-
-    if args.deletechk:
-        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\n{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}You have selected to delete .chk files. This action is permanent.{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}This feature is experimental and has not been fully tested.{bcolors.ENDC}')
-        print(f'{bcolors.WARNING}Copy your data to a safe location before proceeding.{bcolors.ENDC}')
-        print(f'{bcolors.FAIL}\n\nWARNING\tWARNING\tWARNING\tWARNING\t{bcolors.ENDC}')
-        response = input('Proceed (YES/no)?: ')
-
-        if response.casefold() not in ['y', 'yes']:
-            print(f'Response was {response.casefold}. Exiting gracefully.')
-            exit()
-
-    main(args)
+    main()
