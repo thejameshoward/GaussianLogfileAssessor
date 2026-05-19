@@ -29,7 +29,7 @@ ILLEGAL_MULTIPLICITY = re.compile(r'The combination of multiplicity\s+\d+\s+and\
 CONVERGENCE_FAILURE = re.compile(r'Convergence failure -- run terminated\.', re.DOTALL)
 ERRORNEOUS_WRITE = re.compile(r'Erroneous write. Write\s+(-|)\d+\s+instead of \d+.',  re.DOTALL)
 FREQ_START_PATTERN = re.compile(r'(?<=\n Frequencies --)(.*?)(?=\n Red. masses --)', re.DOTALL)
-N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep= \d+')
+N_STEPS_EXCEEDED = re.compile(r'\s+--\s+Number of steps exceeded,\s+NStep=\s+\d+')
 
 MAX_FORCE_PATTERN = re.compile(r'(?<=Maximum Force)(.*?)(?=(?:NO|YES))')
 RMS_FORCE_PATTERN = re.compile(r'(?<=RMS     Force)(.*?)(?=(?:NO|YES))')

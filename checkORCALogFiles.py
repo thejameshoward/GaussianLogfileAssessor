@@ -129,76 +129,6 @@ def get_file_text(file: Path) -> str:
     with open(file, 'r', encoding='utf-8') as infile:
         return infile.read()
 
-def get_job_start_line_numbers(text: str) -> list[int]:
-    '''
-    Identifies line numbers in a Gaussian log file where a new
-    computational job or link step begins.
-
-    Parameters
-    ----------
-    text : str
-        The complete text of the Gaussian log file.
-
-    Returns
-    ----------
-    list[int]
-        A list of line numbers where new job steps or internal links
-        are initiated. Each of these lines should be followed by a
-        "Normal termination" line in a successfully completed calculation.
-    '''
-    lines = text.split('\n')
-
-    # Lines after which a normal termination should appear
-    termination_indicator_lines = []
-
-    # Geometry Optimization Run
-    # THE OPTIMIZATION HAS CONVERGED
-    # ****ORCA TERMINATED NORMALLY****
-
-    for i, line in enumerate(lines):
-        if re.match(LINK_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-        elif re.match(PROCEDING_JOB_STEP_PATTERN, line) is not None:
-            termination_indicator_lines.append(i)
-
-    return termination_indicator_lines
-
-def get_job_error_line_numbers(text: str) -> list[int]:
-    '''
-    Gets the line numbers that indicate an error has
-    occured.
-    '''
-    lines = text.split('\n')
-
-    error_lines = []
-
-    for i, line in enumerate(lines):
-
-        if re.match(FILEIO_ERROR_NON_EXISTENT_FILE, line) is not None:
-            error_lines.append(i)
-
-        elif re.match(ERRORNEOUS_WRITE, line) is not None:
-            error_lines.append(i)
-
-        elif re.match(N_STEPS_EXCEEDED, line) is not None:
-            error_lines.append(i)
-
-    return error_lines
-
-def get_termination_line_numbers(text: str) -> list[int]:
-    '''
-    Gets the line numbers that indicate a new link
-    or an internal job. Successful calculations should
-    have a "Normal termination" line after each of these.
-    '''
-    lines = text.split('\n')
-
-    # Lines after which a normal termination should appear
-    terms = []
-    for i, line in enumerate(lines):
-        if ' Normal termination of Gaussian 16' in line:
-            terms.append(i)
-    return terms
 
 def _is_logfile_complete(split_text: list[str]) -> bool:
     if split_text == ['']:
@@ -355,6 +285,11 @@ def print_analysis_and_move_files(failed: dict,
             Path(_input_file.parent / f'{_input_file.stem}.hess'),
         ]
 
+        # Add error/gbw/output files that were likely missed
+        for ext in ['error', 'output', 'gbw']:
+            for _file in _input_file.parent.glob(f'{_input_file.stem}*.{ext}'):
+                files_to_move.append(_file)
+
         # Move the files
         for _ in files_to_move:
             if _.exists():
@@ -392,6 +327,11 @@ def print_analysis_and_move_files(failed: dict,
             Path(_input_file.parent / f'{_input_file.stem}.densities'),
             Path(_input_file.parent / f'{_input_file.stem}.hess'),
         ]
+
+        # Add error/gbw/output files that were likely missed
+        for ext in ['error', 'output', 'gbw']:
+            for _file in _input_file.parent.glob(f'{_input_file.stem}*.{ext}'):
+                files_to_move.append(_file)
 
         # Move the files
         for _ in files_to_move:
