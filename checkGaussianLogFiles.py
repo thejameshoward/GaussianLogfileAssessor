@@ -683,6 +683,12 @@ def evaluate_g16_logfile(file: Path,
         if lowest_freq_is_negative:
             failure_reasons.append(f'imaginary freq {lowest_freq_value}')
 
+    # Caused by bad accuracy checks in the early stages of an SCF iteration
+    # Fix: increase integration grid to ultrafine or SCF=novaracc or disable
+    # error with integral=NoXCTest (not recommended)
+    if 'Inaccurate quadrature in CalDSu' in text:
+        failure_reasons.append(f'integration grid failed accuracy checks')
+
     # Check for oscillation
     if check_oscillation:
 
